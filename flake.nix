@@ -62,22 +62,35 @@
             vendorHash = "sha256-9Cz3X57TokfHCUtMEEDhVQ0eHgTsSgweoZwLhd/94mQ=";
             extraLdflags = [ "-X ${goModule}/provider/pkg/version.Version=v${version}" ];
 
-            sdks = {
-              # The default python pname/importsCheck are derived from `repo`,
-              # which doesn't match the `pulumi_git` package tfgen emits.
-              python = {
-                pname = "pulumi-git";
-                pythonImportsCheck = [ "pulumi_git" ];
-              };
+            # `sdkDrift.languages` is deliberately unset. It re-runs
+            # `pulumi-tfgen-git <lang>` and diffs the result over the committed
+            # `sdk/<lang>`, which is exactly the check this repo wants, but the
+            # bridge version here delegates codegen to `pulumi package gen-sdk`
+            # and the check derivation has neither the pulumi CLI nor the
+            # language hosts on PATH. Upstream issue #61.
 
+            sdks = {
+              # Every SDK opts out of src narrowing: `narrowSdkSrc` crashes in
+              # pure eval on a `src` that is a flake input. Upstream issue #60,
+              # which has the one-line fix. Drop these four lines once it lands
+              # and the SDKs stop rebuilding on unrelated file changes.
               nodejs = {
+                narrowSrc = false;
                 lockFile = ./sdk/nodejs/package-lock.json;
                 npmDepsHash = "sha256-qOnUtP7XSLCqCIynQ6dB37AhIy+8Aus2DyNZK5HBdRc=";
               };
 
-              go.vendorHash = "sha256-3m92XeNznUgT2pBgcngUqOn8e0cirwc0Jo47alif6Dw=";
+              python.narrowSrc = false;
 
-              dotnet.nugetDeps = ./nix/dotnet-deps.json;
+              go = {
+                narrowSrc = false;
+                vendorHash = "sha256-3m92XeNznUgT2pBgcngUqOn8e0cirwc0Jo47alif6Dw=";
+              };
+
+              dotnet = {
+                narrowSrc = false;
+                nugetDeps = ./nix/dotnet-deps.json;
+              };
             };
 
             meta = {

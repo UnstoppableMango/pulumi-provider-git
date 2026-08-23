@@ -15,6 +15,16 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Only the devShell consumes this. There is no NixOS host here, so none of
+    # sops-nix's modules are imported; what it provides is sops-import-keys-hook,
+    # which seeds a throwaway GNUPGHOME from keys/ (see devShells.default) so
+    # `sops` can encrypt for every recipient in .sops.yaml without the operator
+    # having imported their public keys by hand.
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     treefmt-nix = {
       url = "github:numtide/treefmt-nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -33,6 +43,7 @@
       perSystem =
         {
           config,
+          inputs',
           lib,
           pkgs,
           pulumi2nix,
@@ -116,6 +127,7 @@
             packages = with pkgs; [
               dotnet-sdk
               gnumake
+              gnupg
               go
               nixfmt
               nodejs
@@ -124,8 +136,18 @@
               pulumiPackages.pulumi-nodejs
               pulumiPackages.pulumi-python
               python3
+              sops
               pulumi2nix.pulumiLanguageDotnet
             ];
+
+            # Runs at shell entry and `gpg --import`s every .asc under keys/ into
+            # the ambient keyring, so `sops` can encrypt to the .sops.yaml
+            # recipients on a machine that has never seen their public keys.
+            # `sopsCreateGPGHome` is deliberately unset: with it, the hook would
+            # redirect GNUPGHOME to .git/gnupg, and decrypting would stop working
+            # because the private keys live in the operator's own ~/.gnupg.
+            nativeBuildInputs = [ inputs'.sops-nix.packages.sops-import-keys-hook ];
+            sopsPGPKeyDirs = [ "./keys" ];
           };
 
           treefmt.programs = {

@@ -71,6 +71,88 @@ Put the plugin binary on `PATH` (for example by adding this flake's `packages.de
 - `git.getRepository` - resolves and verifies an existing repository via `ls-remote`.
 - `git.getPatch` - resolves a unified diff and content-addressed ID from inline content, a local file, a GitHub PR/commit, or a GitLab MR/commit.
 
+## Using from Nix
+
+The repo has no published releases yet, so building from this flake is currently the only way to get a working provider plugin and SDK.
+
+### Adding the flake as an input
+
+```nix
+{
+  inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
+
+    pulumi-provider-git = {
+      url = "github:UnstoppableMango/pulumi-provider-git";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+  };
+}
+```
+
+`systems` is [nix-systems/triplet](https://github.com/nix-systems/triplet), so outputs exist for `x86_64-linux`, `aarch64-linux` and `aarch64-darwin` only.
+A consumer on `x86_64-darwin` gets nothing.
+
+### The provider as an ambient plugin
+
+`packages.<system>.default` is `pulumi-resource-git`.
+Put it in your devShell's `packages` and Pulumi picks the plugin up from `PATH`, logging something like `warning: using pulumi-resource-git from $PATH at /nix/store/...`.
+
+```nix
+devShells.default = pkgs.mkShell {
+  packages = [
+    inputs.pulumi-provider-git.packages.${system}.default
+  ];
+};
+```
+
+Pulumi prefers an ambient plugin over the schema's `pluginDownloadURL`, which is what you want here: that URL currently resolves to nothing, because the repo has no releases to download from.
+
+### The Node.js SDK
+
+`packages.<system>.sdk-nodejs` lays the package out at `$out/lib/node_modules/@unmango/pulumi-git`.
+
+That output must be **copied and stripped, not symlinked**.
+It bundles its own `node_modules` containing a second `@pulumi/pulumi`, and Node and bun both resolve through a symlink's realpath, so a symlinked SDK would load a different copy of the Pulumi runtime than your program does.
+The result is the usual cross-runtime breakage, with two Pulumi runtimes loaded in one process and resources registered against the one the engine isn't talking to.
+This is not a subtle preference, a symlink simply does not work.
+
+Copying with `-L` and deleting the nested `node_modules` afterwards leaves the SDK resolving `@pulumi/pulumi` upward into your project's own copy:
+
+```nix
+vendorGitSdk = pkgs.writeShellScriptBin "vendor-git-sdk" ''
+  set -euo pipefail
+  rm -rf node_modules/@unmango/pulumi-git
+  mkdir -p node_modules/@unmango
+  cp -rL --no-preserve=mode,ownership \
+    ${gitProvider.sdk-nodejs}/lib/node_modules/@unmango/pulumi-git \
+    node_modules/@unmango/pulumi-git
+  rm -rf node_modules/@unmango/pulumi-git/node_modules
+'';
+```
+
+`gitProvider` there is `inputs.pulumi-provider-git.packages.${system}`.
+Run `vendor-git-sdk` from the project root, in `shellHook` or as a build step, before `pulumi up`.
+
+Two gotchas worth knowing before you hit them:
+
+- Do not add `@unmango/pulumi-git` to `package.json`. No package manager can resolve it, and `bun install --frozen-lockfile` fails if the entry is there.
+- TypeScript resolves the vendored copy out of `node_modules` fine under `moduleResolution: "bundler"`, with no `paths` entry needed.
+
+### Other outputs
+
+- `packages.<system>.sdk-python` is the Python SDK, built as a `python3.<minor>` package.
+- `packages.<system>.sdk-go` is the Go SDK.
+- `packages.<system>.sdk-dotnet` is the .NET SDK.
+- `packages.<system>.schema` is the generated `schema.json`.
+
+Each is also available under its canonical name, `pulumi-resource-git-sdk-<lang>` and `pulumi-resource-git-schema`.
+
+### Caching
+
+Once CI is authenticated to push to it, these builds will substitute from the `unstoppablemango` [Cachix](https://cachix.org) cache rather than building the provider and every SDK from source.
+The cache is not populated yet, but when it is, `cachix use unstoppablemango` (or adding `https://unstoppablemango.cachix.org` to `extra-substituters`) is all a consumer needs.
+
 ## Development
 
 Everything is built with [Nix](https://nixos.org) via [pulumi2nix](https://github.com/UnstoppableMango/pulumi2nix).

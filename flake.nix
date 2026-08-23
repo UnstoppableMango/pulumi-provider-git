@@ -25,17 +25,30 @@
     inputs@{ flake-parts, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
       systems = import inputs.systems;
-      imports = [ inputs.treefmt-nix.flakeModule ];
+      imports = [
+        inputs.pulumi2nix.flakeModules.default
+        inputs.treefmt-nix.flakeModule
+      ];
 
       perSystem =
-        { lib, pkgs, ... }:
+        {
+          config,
+          lib,
+          pkgs,
+          pulumi2nix,
+          ...
+        }:
         let
-          pulumi2nix = inputs.pulumi2nix.lib { inherit pkgs; };
-
           version = "0.0.1";
           goModule = "github.com/UnstoppableMango/pulumi-provider-git";
 
-          provider = pulumi2nix.mkTerraformBridgeProvider {
+          # The flake module names `packages.pulumi-resource-git` after the
+          # declaration below, and flattens its `passthru.schema`/`passthru.sdks`
+          # into `packages.pulumi-resource-git-{schema,sdk-<lang>}`.
+          provider = config.pulumi.packages.pulumi-resource-git;
+        in
+        {
+          pulumi.terraformBridgeProviders.pulumi-resource-git = {
             # Build from this checkout rather than a fetch of a pushed tag, so
             # the provider, its schema and every SDK come from the working tree.
             # Only git-tracked files are visible, which is why the generated
@@ -49,21 +62,23 @@
             vendorHash = "sha256-9Cz3X57TokfHCUtMEEDhVQ0eHgTsSgweoZwLhd/94mQ=";
             extraLdflags = [ "-X ${goModule}/provider/pkg/version.Version=v${version}" ];
 
-            # The default python pname/importsCheck are derived from `repo`,
-            # which doesn't match the `pulumi_git` package tfgen emits.
-            pythonArgs = {
-              pname = "pulumi-git";
-              pythonImportsCheck = [ "pulumi_git" ];
+            sdks = {
+              # The default python pname/importsCheck are derived from `repo`,
+              # which doesn't match the `pulumi_git` package tfgen emits.
+              python = {
+                pname = "pulumi-git";
+                pythonImportsCheck = [ "pulumi_git" ];
+              };
+
+              nodejs = {
+                lockFile = ./sdk/nodejs/package-lock.json;
+                npmDepsHash = "sha256-qOnUtP7XSLCqCIynQ6dB37AhIy+8Aus2DyNZK5HBdRc=";
+              };
+
+              go.vendorHash = "sha256-3m92XeNznUgT2pBgcngUqOn8e0cirwc0Jo47alif6Dw=";
+
+              dotnet.nugetDeps = ./nix/dotnet-deps.json;
             };
-
-            nodejsArgs = {
-              lockFile = ./sdk/nodejs/package-lock.json;
-              npmDepsHash = "sha256-qOnUtP7XSLCqCIynQ6dB37AhIy+8Aus2DyNZK5HBdRc=";
-            };
-
-            goArgs.vendorHash = "sha256-3m92XeNznUgT2pBgcngUqOn8e0cirwc0Jo47alif6Dw=";
-
-            dotnetArgs.nugetDeps = ./nix/dotnet-deps.json;
 
             meta = {
               description = "A Pulumi provider for declaring and reconciling the state of git repositories";
@@ -74,16 +89,13 @@
             };
           };
 
+          # Short aliases for the module's canonical output names. `checks` comes
+          # from the module, and covers the same derivations under those names.
           packages = {
             default = provider;
-            pulumi-resource-git = provider;
             schema = provider.passthru.schema;
           }
           // lib.mapAttrs' (lang: sdk: lib.nameValuePair "sdk-${lang}" sdk) provider.passthru.sdks;
-        in
-        {
-          inherit packages;
-          checks = packages;
 
           devShells.default = pkgs.mkShellNoCC {
             packages = with pkgs; [
@@ -97,7 +109,7 @@
               pulumiPackages.pulumi-nodejs
               pulumiPackages.pulumi-python
               python3
-              inputs.pulumi2nix.packages.${pkgs.stdenv.hostPlatform.system}.pulumi-language-dotnet
+              pulumi2nix.pulumiLanguageDotnet
             ];
           };
 

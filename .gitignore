@@ -40,3 +40,7 @@ go.work.sum
 
 .claude/*
 !.claude/skills/
+
+# nix build output
+/result
+/result-*

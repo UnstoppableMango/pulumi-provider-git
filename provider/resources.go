@@ -29,17 +29,23 @@ var metadata []byte
 // into a Pulumi provider.
 func Provider() tfbridge.ProviderInfo {
 	prov := tfbridge.ProviderInfo{
-		P:                 pf.ShimProvider(shim.NewProvider()),
-		Name:              mainPkg,
-		Version:           version.Version,
-		DisplayName:       "Git",
-		Publisher:         "UnstoppableMango",
-		Description:       "A Pulumi package for declaring and reconciling the state of git repositories.",
-		Keywords:          []string{"git", "patch", "category/utility"},
-		License:           "MIT",
-		Homepage:          "https://github.com/UnstoppableMango/pulumi-provider-git",
-		Repository:        "https://github.com/UnstoppableMango/pulumi-provider-git",
-		GitHubOrg:         "UnstoppableMango",
+		P:           pf.ShimProvider(shim.NewProvider()),
+		Name:        mainPkg,
+		Version:     version.Version,
+		DisplayName: "Git",
+		Publisher:   "UnstoppableMango",
+		Description: "A Pulumi package for declaring and reconciling the state of git repositories.",
+		Keywords:    []string{"git", "patch", "category/utility"},
+		License:     "MIT",
+		Homepage:    "https://github.com/UnstoppableMango/pulumi-provider-git",
+		Repository:  "https://github.com/UnstoppableMango/pulumi-provider-git",
+		GitHubOrg:   "UnstoppableMango",
+		// PluginDownloadURL is load-bearing and must not change. It is baked into the default
+		// provider URN (default_0_0_1_github_/api.github.com/UnstoppableMango/pulumi-provider-git),
+		// so editing or removing it re-keys the default provider and replaces every git:* resource
+		// in every existing stack. It resolves against this repo's GitHub releases, which means the
+		// release asset names in .goreleaser.yml must match what Pulumi's github:// resolver expects
+		// (pulumi-resource-git-v<version>-<os>-<arch>.tar.gz containing a pulumi-resource-git binary).
 		PluginDownloadURL: "github://api.github.com/UnstoppableMango/pulumi-provider-git",
 		MetadataInfo:      tfbridge.NewProviderMetadata(metadata),
 

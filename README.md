@@ -52,6 +52,19 @@ The following configuration points are available for the `git` provider:
 - `git:gitImplementation` - the git backend to use, either `go-git` (default) or `exec`.
 - `git:auth` - default authentication used to connect to repositories and hosts, with a `token` field applied when a resource or data source does not set its own `auth.token`.
 
+### Plugin resolution
+
+The SDKs ship with `pluginDownloadURL` set to `github://api.github.com/UnstoppableMango/pulumi-provider-git`, and Pulumi resolves the `pulumi-resource-git` plugin binary in this order:
+
+1. An ambient `pulumi-resource-git` on `PATH` wins. Pulumi logs `warning: using pulumi-resource-git from $PATH at ...` when it takes this route.
+2. Otherwise Pulumi downloads the plugin from the `github://` URL, which resolves to this repository's GitHub releases.
+
+That URL is fixed and will not change.
+It is part of the default provider URN (`pulumi:providers:git::default_0_0_1_github_/api.github.com/UnstoppableMango/pulumi-provider-git`), so changing or dropping it would give every stack a new default provider and replace every `git:*` resource.
+
+Until a GitHub release exists, only the `PATH` route works.
+Put the plugin binary on `PATH` (for example by adding this flake's `packages.default` to a devShell) and Pulumi will pick it up instead of attempting a download.
+
 ## Resources
 
 - `git.Branch` - tracks a branch against a `baseRef`, applies an ordered `patches` stack on top of it, and force-pushes the result.

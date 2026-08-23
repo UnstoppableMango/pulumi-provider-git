@@ -41,6 +41,30 @@ That tag triggers `.github/workflows/goreleaser.yml`, which cross-compiles the p
 The archive names in `.goreleaser.yml` are a hard contract with Pulumi's plugin resolver, which fetches `pulumi-resource-git-v<version>-<os>-<arch>.tar.gz`; see the comments in that file before changing them.
 goreleaser exists alongside the nix build because `systems` is [nix-systems/triplet](https://github.com/nix-systems/triplet) and cannot produce windows or `x86_64-darwin` artifacts.
 
+### Release signing
+
+goreleaser detach-signs the checksum file and uploads the signature as `pulumi-resource-git-v<version>-checksums.txt.sig`.
+Only the checksum file is signed, because verifying an archive against a signed list of checksums covers every archive with one signature.
+
+The signing key is `pulumi-provider-git release signing <erik.rasmussen@unmango.dev>`, fingerprint `7135CB2CCB8C92B3F6AB72239E1E52C782BA4D93`.
+Its public half is committed at [`release-key.asc`](./release-key.asc) and it expires on 2027-08-23.
+This key is specific to this repository and is not the one that signs [terraform-provider-git](https://github.com/UnstoppableMango/terraform-provider-git) releases.
+
+To verify a downloaded archive:
+
+```sh
+gpg --import release-key.asc
+gpg --verify pulumi-resource-git-v0.0.1-checksums.txt.sig pulumi-resource-git-v0.0.1-checksums.txt
+sha256sum --check --ignore-missing pulumi-resource-git-v0.0.1-checksums.txt
+```
+
+`gpg --verify` reports `Good signature` alongside a `WARNING: This key is not certified with a trusted signature` line.
+That warning is expected and is not a verification failure: it only means you have not signed the release key with your own.
+Check the fingerprint above against the one gpg prints, and sign the key locally if you want the warning to go away.
+
+Pulumi's plugin resolver does not check these signatures when it downloads the plugin.
+Verification is a manual step for anyone who wants provenance on an artifact.
+
 The provider's version is its own.
 It is deliberately independent of the bridged `github.com/UnstoppableMango/terraform-provider-git v0.0.3` pinned in `provider/go.mod`, and the two version lines are not expected to track each other.
 Bumping the upstream bridge is an ordinary change to this repository, which release-please then versions like any other.
@@ -168,3 +192,27 @@ make fmt       # nix fmt
 ```
 
 Generated output (`provider/cmd/pulumi-resource-git/schema.json` and `sdk/`) is committed, because the nix build reads the SDK sources out of the git-tracked source tree.
+
+### Git hooks
+
+`sdk/python/README.md` is a copy of this file, made by `make generate_python`, and the codegen CI job fails when the two drift.
+Entering `nix develop` sets `core.hooksPath` to `.githooks/`, whose `pre-commit` hook re-copies the README and stages it, so a docs-only edit cannot leave the SDK copy stale.
+Run `git config core.hooksPath .githooks` by hand if you work outside the devShell, or `git config --unset core.hooksPath` to go back to `.git/hooks`.
+
+### Secrets
+
+The private half of the release signing key and its passphrase live in `secrets/gpg-release-key.enc.yaml`, encrypted with [sops](https://github.com/getsops/sops).
+`.sops.yaml` names the recipients that can decrypt it, currently Erik's personal key `B4986C137EB15A0C91FB69FE264283BBFDC491BC`.
+`keys/` holds the public half of each recipient, and the devShell runs sops-nix's `sops-import-keys-hook` to import them, so `sops` can encrypt on a machine that has never seen those keys.
+Decrypting still requires the matching private key in your own keyring.
+
+The workflow reads the key from the `GPG_PRIVATE_KEY` and `PASSPHRASE` repository secrets, not from `secrets/`.
+The encrypted file is the source of truth; the Actions secrets are a copy of it, pushed by hand:
+
+```sh
+sops -d --extract '["gpg_private_key"]' secrets/gpg-release-key.enc.yaml | gh secret set GPG_PRIVATE_KEY
+sops -d --extract '["passphrase"]' secrets/gpg-release-key.enc.yaml | gh secret set PASSPHRASE
+```
+
+To rotate the key, generate a new one, `sops secrets/gpg-release-key.enc.yaml` to replace both fields, re-export `release-key.asc`, and re-run the two commands above.
+To add a recipient, drop their public key in `keys/`, add the fingerprint to `.sops.yaml`, then run `sops updatekeys secrets/gpg-release-key.enc.yaml`.

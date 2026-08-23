@@ -148,6 +148,17 @@
             # because the private keys live in the operator's own ~/.gnupg.
             nativeBuildInputs = [ inputs'.sops-nix.packages.sops-import-keys-hook ];
             sopsPGPKeyDirs = [ "./keys" ];
+
+            # Point git at the committed hooks in .githooks/, so entering the
+            # devShell is all it takes to get them. `.githooks/pre-commit` keeps
+            # sdk/python/README.md in step with the root README, which the
+            # codegen CI job checks. This replaces .git/hooks as the hook
+            # directory; `git config --unset core.hooksPath` puts it back.
+            shellHook = ''
+              if [ -d .git ]; then
+                git config core.hooksPath .githooks
+              fi
+            '';
           };
 
           treefmt.programs = {

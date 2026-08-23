@@ -58,6 +58,10 @@ gpg --verify pulumi-resource-git-v0.0.1-checksums.txt.sig pulumi-resource-git-v0
 sha256sum --check --ignore-missing pulumi-resource-git-v0.0.1-checksums.txt
 ```
 
+`gpg --verify` reports `Good signature` alongside a `WARNING: This key is not certified with a trusted signature` line.
+That warning is expected and is not a verification failure: it only means you have not signed the release key with your own.
+Check the fingerprint above against the one gpg prints, and sign the key locally if you want the warning to go away.
+
 Pulumi's plugin resolver does not check these signatures when it downloads the plugin.
 Verification is a manual step for anyone who wants provenance on an artifact.
 

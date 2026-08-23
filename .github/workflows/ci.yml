@@ -4,7 +4,6 @@ on:
   push:
     branches: [main]
   pull_request:
-    branches: [main]
 
 jobs:
   build:
@@ -21,4 +20,3 @@ jobs:
           name: unstoppablemango
 
       - run: nix flake check
-      - run: nix build .#

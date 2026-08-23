@@ -49,6 +49,9 @@ The following configuration points are available for the `git` provider:
 
 Everything is built with [Nix](https://nixos.org) via [pulumi2nix](https://github.com/UnstoppableMango/pulumi2nix).
 
+`flake.nix` declares the provider through `pulumi2nix.flakeModules.default`, so the plugin binary, its schema, and all four SDKs are derived from one `pulumi.terraformBridgeProviders.pulumi-resource-git` declaration and mirrored into `checks`.
+The canonical outputs are `pulumi-resource-git`, `pulumi-resource-git-schema` and `pulumi-resource-git-sdk-<lang>`; `schema` and `sdk-<lang>` are kept as short aliases.
+
 ```sh
 make build     # nix build .#
 make check     # nix flake check

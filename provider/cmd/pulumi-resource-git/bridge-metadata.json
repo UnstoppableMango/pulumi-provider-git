@@ -1,0 +1,28 @@
+{
+    "auto-aliasing": {
+        "resources": {
+            "git_branch": {
+                "current": "git:index/branch:Branch",
+                "fields": {
+                    "patches": {
+                        "maxItemsOne": false
+                    }
+                }
+            }
+        },
+        "datasources": {
+            "git_patch": {
+                "current": "git:index/getPatch:getPatch"
+            },
+            "git_repository": {
+                "current": "git:index/getRepository:getRepository"
+            }
+        }
+    },
+    "auto-settings": {},
+    "default-resource-schema-fixups": {
+        "resources": {
+            "git_branch": {}
+        }
+    }
+}

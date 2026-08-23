@@ -1,0 +1,486 @@
+{
+    "name": "git",
+    "displayName": "Git",
+    "description": "A Pulumi package for declaring and reconciling the state of git repositories.",
+    "keywords": [
+        "git",
+        "patch",
+        "category/utility"
+    ],
+    "homepage": "https://github.com/UnstoppableMango/pulumi-provider-git",
+    "license": "MIT",
+    "attribution": "This Pulumi package is based on the [`git` Terraform Provider](https://github.com/UnstoppableMango/terraform-provider-git).",
+    "repository": "https://github.com/UnstoppableMango/pulumi-provider-git",
+    "pluginDownloadURL": "github://api.github.com/UnstoppableMango/pulumi-provider-git",
+    "publisher": "UnstoppableMango",
+    "meta": {
+        "moduleFormat": "(.*)(?:/[^/]*)"
+    },
+    "language": {
+        "csharp": {
+            "packageReferences": {
+                "Pulumi": "3.*"
+            },
+            "compatibility": "tfbridge20",
+            "rootNamespace": "UnMango",
+            "respectSchemaVersion": true
+        },
+        "go": {
+            "importBasePath": "github.com/UnstoppableMango/pulumi-provider-git/sdk/go/git",
+            "generateResourceContainerTypes": true,
+            "generateExtraInputTypes": true,
+            "respectSchemaVersion": true
+        },
+        "nodejs": {
+            "packageName": "@unmango/pulumi-git",
+            "packageDescription": "A Pulumi package for declaring and reconciling the state of git repositories.",
+            "readme": "\u003e This provider is a derived work of the [Terraform Provider](https://github.com/UnstoppableMango/terraform-provider-git)\n\u003e distributed under [MPL 2.0](https://www.mozilla.org/en-US/MPL/2.0/). If you encounter a bug or missing feature,\n\u003e first check the [`pulumi-git` repo](https://github.com/UnstoppableMango/pulumi-provider-git/issues); however, if that doesn't turn up anything,\n\u003e please consult the source [`terraform-provider-git` repo](https://github.com/UnstoppableMango/terraform-provider-git/issues).",
+            "compatibility": "tfbridge20",
+            "disableUnionOutputTypes": true,
+            "respectSchemaVersion": true
+        },
+        "python": {
+            "packageName": "pulumi_git",
+            "readme": "\u003e This provider is a derived work of the [Terraform Provider](https://github.com/UnstoppableMango/terraform-provider-git)\n\u003e distributed under [MPL 2.0](https://www.mozilla.org/en-US/MPL/2.0/). If you encounter a bug or missing feature,\n\u003e first check the [`pulumi-git` repo](https://github.com/UnstoppableMango/pulumi-provider-git/issues); however, if that doesn't turn up anything,\n\u003e please consult the source [`terraform-provider-git` repo](https://github.com/UnstoppableMango/terraform-provider-git/issues).",
+            "compatibility": "tfbridge20",
+            "respectSchemaVersion": true,
+            "pyproject": {
+                "enabled": true
+            }
+        }
+    },
+    "config": {
+        "variables": {
+            "auth": {
+                "$ref": "#/types/git:config/auth:auth",
+                "description": "Default authentication details used to connect to repositories and hosts, applied when a resource or data source does not set its own `auth.token`."
+            },
+            "gitImplementation": {
+                "type": "string",
+                "description": "Git implementation backend to use. Must be one of `go-git` or \u003cspan pulumi-lang-nodejs=\"`exec`\" pulumi-lang-dotnet=\"`Exec`\" pulumi-lang-go=\"`exec`\" pulumi-lang-python=\"`exec`\" pulumi-lang-yaml=\"`exec`\" pulumi-lang-java=\"`exec`\" pulumi-lang-hcl=\"`exec`\"\u003e`exec`\u003c/span\u003e. Defaults to `go-git`."
+            }
+        }
+    },
+    "types": {
+        "git:config/auth:auth": {
+            "properties": {
+                "token": {
+                    "type": "string",
+                    "description": "Default token used to authenticate with a repository host, unless overridden per-resource.\n",
+                    "secret": true
+                }
+            },
+            "type": "object"
+        },
+        "git:index/BranchRepository:BranchRepository": {
+            "properties": {
+                "auth": {
+                    "$ref": "#/types/git:index/BranchRepositoryAuth:BranchRepositoryAuth",
+                    "description": "Authentication details used to connect to the repository.\n"
+                },
+                "host": {
+                    "type": "string",
+                    "description": "Type of host the repository is on. Must be one of \u003cspan pulumi-lang-nodejs=\"`github`\" pulumi-lang-dotnet=\"`Github`\" pulumi-lang-go=\"`github`\" pulumi-lang-python=\"`github`\" pulumi-lang-yaml=\"`github`\" pulumi-lang-java=\"`github`\" pulumi-lang-hcl=\"`github`\"\u003e`github`\u003c/span\u003e, \u003cspan pulumi-lang-nodejs=\"`gitlab`\" pulumi-lang-dotnet=\"`Gitlab`\" pulumi-lang-go=\"`gitlab`\" pulumi-lang-python=\"`gitlab`\" pulumi-lang-yaml=\"`gitlab`\" pulumi-lang-java=\"`gitlab`\" pulumi-lang-hcl=\"`gitlab`\"\u003e`gitlab`\u003c/span\u003e, or \u003cspan pulumi-lang-nodejs=\"`generic`\" pulumi-lang-dotnet=\"`Generic`\" pulumi-lang-go=\"`generic`\" pulumi-lang-python=\"`generic`\" pulumi-lang-yaml=\"`generic`\" pulumi-lang-java=\"`generic`\" pulumi-lang-hcl=\"`generic`\"\u003e`generic`\u003c/span\u003e.\n"
+                },
+                "url": {
+                    "type": "string",
+                    "description": "URL of the repository.\n"
+                }
+            },
+            "type": "object",
+            "required": [
+                "url"
+            ]
+        },
+        "git:index/BranchRepositoryAuth:BranchRepositoryAuth": {
+            "properties": {
+                "token": {
+                    "type": "string",
+                    "description": "Token used to authenticate with the repository host.\n",
+                    "secret": true
+                }
+            },
+            "type": "object"
+        },
+        "git:index/ProviderAuth:ProviderAuth": {
+            "properties": {
+                "token": {
+                    "type": "string",
+                    "description": "Default token used to authenticate with a repository host, unless overridden per-resource.\n",
+                    "secret": true
+                }
+            },
+            "type": "object"
+        },
+        "git:index/getPatchAuth:getPatchAuth": {
+            "properties": {
+                "token": {
+                    "type": "string",
+                    "description": "Token used to authenticate with the GitHub or GitLab API.\n",
+                    "secret": true
+                }
+            },
+            "type": "object"
+        },
+        "git:index/getPatchGithub:getPatchGithub": {
+            "properties": {
+                "commit": {
+                    "type": "string",
+                    "description": "Commit sha to resolve the patch from.\n"
+                },
+                "pr": {
+                    "type": "integer",
+                    "description": "Pull request number to resolve the patch from.\n"
+                },
+                "repository": {
+                    "type": "string",
+                    "description": "Repository the pull request or commit belongs to, in `owner/name` form.\n"
+                },
+                "sha": {
+                    "type": "string",
+                    "description": "Resolved commit sha (the pull request's head commit, or \u003cspan pulumi-lang-nodejs=\"`commit`\" pulumi-lang-dotnet=\"`Commit`\" pulumi-lang-go=\"`commit`\" pulumi-lang-python=\"`commit`\" pulumi-lang-yaml=\"`commit`\" pulumi-lang-java=\"`commit`\" pulumi-lang-hcl=\"`commit`\"\u003e`commit`\u003c/span\u003e itself).\n"
+                }
+            },
+            "type": "object",
+            "required": [
+                "repository",
+                "sha"
+            ],
+            "language": {
+                "nodejs": {
+                    "requiredInputs": [
+                        "repository"
+                    ]
+                }
+            }
+        },
+        "git:index/getPatchGitlab:getPatchGitlab": {
+            "properties": {
+                "commit": {
+                    "type": "string",
+                    "description": "Commit sha to resolve the patch from.\n"
+                },
+                "mr": {
+                    "type": "integer",
+                    "description": "Merge request IID to resolve the patch from.\n"
+                },
+                "project": {
+                    "type": "string",
+                    "description": "Project the merge request or commit belongs to, as a GitLab project path (e.g. `group/project`) or numeric ID.\n"
+                },
+                "sha": {
+                    "type": "string",
+                    "description": "Resolved commit sha (the merge request's head commit, or \u003cspan pulumi-lang-nodejs=\"`commit`\" pulumi-lang-dotnet=\"`Commit`\" pulumi-lang-go=\"`commit`\" pulumi-lang-python=\"`commit`\" pulumi-lang-yaml=\"`commit`\" pulumi-lang-java=\"`commit`\" pulumi-lang-hcl=\"`commit`\"\u003e`commit`\u003c/span\u003e itself).\n"
+                }
+            },
+            "type": "object",
+            "required": [
+                "project",
+                "sha"
+            ],
+            "language": {
+                "nodejs": {
+                    "requiredInputs": [
+                        "project"
+                    ]
+                }
+            }
+        },
+        "git:index/getRepositoryAuth:getRepositoryAuth": {
+            "properties": {
+                "token": {
+                    "type": "string",
+                    "description": "Token used to authenticate with the repository host.\n",
+                    "secret": true
+                }
+            },
+            "type": "object"
+        }
+    },
+    "provider": {
+        "description": "The provider type for the git package. By default, resources use package-wide configuration\nsettings, however an explicit `Provider` instance may be created and passed during resource\nconstruction to achieve fine-grained programmatic control over provider settings. See the\n[documentation](https://www.pulumi.com/docs/reference/programming-model/#providers) for more information.\n",
+        "properties": {
+            "auth": {
+                "$ref": "#/types/git:index/ProviderAuth:ProviderAuth",
+                "description": "Default authentication details used to connect to repositories and hosts, applied when a resource or data source does not set its own `auth.token`."
+            },
+            "gitImplementation": {
+                "type": "string",
+                "description": "Git implementation backend to use. Must be one of `go-git` or \u003cspan pulumi-lang-nodejs=\"`exec`\" pulumi-lang-dotnet=\"`Exec`\" pulumi-lang-go=\"`exec`\" pulumi-lang-python=\"`exec`\" pulumi-lang-yaml=\"`exec`\" pulumi-lang-java=\"`exec`\" pulumi-lang-hcl=\"`exec`\"\u003e`exec`\u003c/span\u003e. Defaults to `go-git`."
+            }
+        },
+        "inputProperties": {
+            "auth": {
+                "$ref": "#/types/git:index/ProviderAuth:ProviderAuth",
+                "description": "Default authentication details used to connect to repositories and hosts, applied when a resource or data source does not set its own `auth.token`."
+            },
+            "gitImplementation": {
+                "type": "string",
+                "description": "Git implementation backend to use. Must be one of `go-git` or \u003cspan pulumi-lang-nodejs=\"`exec`\" pulumi-lang-dotnet=\"`Exec`\" pulumi-lang-go=\"`exec`\" pulumi-lang-python=\"`exec`\" pulumi-lang-yaml=\"`exec`\" pulumi-lang-java=\"`exec`\" pulumi-lang-hcl=\"`exec`\"\u003e`exec`\u003c/span\u003e. Defaults to `go-git`."
+            }
+        },
+        "methods": {
+            "terraformConfig": "pulumi:providers:git/terraformConfig"
+        }
+    },
+    "resources": {
+        "git:index/branch:Branch": {
+            "description": "Tracks a branch's base ref within a repository, and optionally an ordered patch stack applied on top of it. When \u003cspan pulumi-lang-nodejs=\"`patches`\" pulumi-lang-dotnet=\"`Patches`\" pulumi-lang-go=\"`patches`\" pulumi-lang-python=\"`patches`\" pulumi-lang-yaml=\"`patches`\" pulumi-lang-java=\"`patches`\" pulumi-lang-hcl=\"`patches`\"\u003e`patches`\u003c/span\u003e is set, the resulting commits are force-pushed to the branch on the remote; otherwise this resource only resolves and tracks the observed base ref.\n\n## Example Usage\n\n\u003c!--Start PulumiCodeChooser --\u003e\n```typescript\nimport * as pulumi from \"@pulumi/pulumi\";\nimport * as git from \"@unmango/pulumi-git\";\n\n// Omits the required_providers block since this example also runs as an\n// acceptance test against an in-process build; see examples/provider/provider.tf.\n// Tracks the \"main\" branch of a public repository. Safe to run against a\n// repository you don't own; git_branch never pushes.\nconst main = new git.Branch(\"main\", {\n    repository: {\n        url: \"https://github.com/UnstoppableMango/terraform-provider-git.git\",\n        host: \"github\",\n    },\n    name: \"main\",\n    baseRef: \"main\",\n});\nexport const resolvedSha = main.baseSha;\n```\n```python\nimport pulumi\nimport pulumi_git as git\n\n# Omits the required_providers block since this example also runs as an\n# acceptance test against an in-process build; see examples/provider/provider.tf.\n# Tracks the \"main\" branch of a public repository. Safe to run against a\n# repository you don't own; git_branch never pushes.\nmain = git.Branch(\"main\",\n    repository={\n        \"url\": \"https://github.com/UnstoppableMango/terraform-provider-git.git\",\n        \"host\": \"github\",\n    },\n    name=\"main\",\n    base_ref=\"main\")\npulumi.export(\"resolvedSha\", main.base_sha)\n```\n```csharp\nusing System.Collections.Generic;\nusing System.Linq;\nusing Pulumi;\nusing Git = UnMango.Git;\n\nreturn await Deployment.RunAsync(() =\u003e \n{\n    // Omits the required_providers block since this example also runs as an\n    // acceptance test against an in-process build; see examples/provider/provider.tf.\n    // Tracks the \"main\" branch of a public repository. Safe to run against a\n    // repository you don't own; git_branch never pushes.\n    var main = new Git.Branch(\"main\", new()\n    {\n        Repository = new Git.Inputs.BranchRepositoryArgs\n        {\n            Url = \"https://github.com/UnstoppableMango/terraform-provider-git.git\",\n            Host = \"github\",\n        },\n        Name = \"main\",\n        BaseRef = \"main\",\n    });\n\n    return new Dictionary\u003cstring, object?\u003e\n    {\n        [\"resolvedSha\"] = main.BaseSha,\n    };\n});\n```\n```go\npackage main\n\nimport (\n\t\"github.com/UnstoppableMango/pulumi-provider-git/sdk/go/git\"\n\t\"github.com/pulumi/pulumi/sdk/v3/go/pulumi\"\n)\n\nfunc main() {\n\tpulumi.Run(func(ctx *pulumi.Context) error {\n\t\t// Omits the required_providers block since this example also runs as an\n\t\t// acceptance test against an in-process build; see examples/provider/provider.tf.\n\t\t// Tracks the \"main\" branch of a public repository. Safe to run against a\n\t\t// repository you don't own; git_branch never pushes.\n\t\tmain, err := git.NewBranch(ctx, \"main\", \u0026git.BranchArgs{\n\t\t\tRepository: \u0026git.BranchRepositoryArgs{\n\t\t\t\tUrl:  pulumi.String(\"https://github.com/UnstoppableMango/terraform-provider-git.git\"),\n\t\t\t\tHost: pulumi.String(\"github\"),\n\t\t\t},\n\t\t\tName:    pulumi.String(\"main\"),\n\t\t\tBaseRef: pulumi.String(\"main\"),\n\t\t})\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\tctx.Export(\"resolvedSha\", main.BaseSha)\n\t\treturn nil\n\t})\n}\n```\n```hcl\npulumi {\n  required_providers {\n    git = {\n      source = \"pulumi/git\"\n    }\n  }\n}\n\n# Omits the required_providers block since this example also runs as an\n# acceptance test against an in-process build; see examples/provider/provider.tf.\n# Tracks the \"main\" branch of a public repository. Safe to run against a\n# repository you don't own; git_branch never pushes.\nresource \"git_branch\" \"main\" {\n  repository = {\n    url  = \"https://github.com/UnstoppableMango/terraform-provider-git.git\"\n    host = \"github\"\n  }\n  name     = \"main\"\n  base_ref = \"main\"\n}\noutput \"resolvedSha\" {\n  value = git_branch.main.base_sha\n}\n```\n```java\npackage generated_program;\n\nimport com.pulumi.Context;\nimport com.pulumi.Pulumi;\nimport com.pulumi.core.Output;\nimport com.pulumi.git.Branch;\nimport com.pulumi.git.BranchArgs;\nimport com.pulumi.git.inputs.BranchRepositoryArgs;\nimport java.util.ArrayList;\nimport java.util.Arrays;\nimport java.util.Map;\nimport java.io.File;\nimport java.nio.file.Files;\nimport java.nio.file.Paths;\n\npublic class App {\n    public static void main(String[] args) {\n        Pulumi.run(App::stack);\n    }\n\n    public static void stack(Context ctx) {\n        // Omits the required_providers block since this example also runs as an\n        // acceptance test against an in-process build; see examples/provider/provider.tf.\n        // Tracks the \"main\" branch of a public repository. Safe to run against a\n        // repository you don't own; git_branch never pushes.\n        var main = new Branch(\"main\", BranchArgs.builder()\n            .repository(BranchRepositoryArgs.builder()\n                .url(\"https://github.com/UnstoppableMango/terraform-provider-git.git\")\n                .host(\"github\")\n                .build())\n            .name(\"main\")\n            .baseRef(\"main\")\n            .build());\n\n        ctx.export(\"resolvedSha\", main.baseSha());\n    }\n}\n```\n```yaml\nresources:\n  # Omits the required_providers block since this example also runs as an\n  # acceptance test against an in-process build; see examples/provider/provider.tf.\n\n  # Tracks the \"main\" branch of a public repository. Safe to run against a\n  # repository you don't own; git_branch never pushes.\n  main:\n    type: git:Branch\n    properties:\n      repository:\n        url: https://github.com/UnstoppableMango/terraform-provider-git.git\n        host: github\n      name: main\n      baseRef: main\noutputs:\n  resolvedSha: ${main.baseSha}\n```\n\u003c!--End PulumiCodeChooser --\u003e\n",
+            "properties": {
+                "baseRef": {
+                    "type": "string",
+                    "description": "Ref this branch is based on.\n"
+                },
+                "baseSha": {
+                    "type": "string",
+                    "description": "Resolved commit hash of \u003cspan pulumi-lang-nodejs=\"`baseRef`\" pulumi-lang-dotnet=\"`BaseRef`\" pulumi-lang-go=\"`baseRef`\" pulumi-lang-python=\"`base_ref`\" pulumi-lang-yaml=\"`baseRef`\" pulumi-lang-java=\"`baseRef`\" pulumi-lang-hcl=\"`base_ref`\"\u003e`baseRef`\u003c/span\u003e as of the last read.\n"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "Name of the branch.\n"
+                },
+                "onConflict": {
+                    "type": "string",
+                    "description": "How to handle the branch's remote tip having moved since it was last observed, when pushing the patch stack. \u003cspan pulumi-lang-nodejs=\"`force`\" pulumi-lang-dotnet=\"`Force`\" pulumi-lang-go=\"`force`\" pulumi-lang-python=\"`force`\" pulumi-lang-yaml=\"`force`\" pulumi-lang-java=\"`force`\" pulumi-lang-hcl=\"`force`\"\u003e`force`\u003c/span\u003e (default) always force-pushes, discarding drift, matching this provider's historical behavior. \u003cspan pulumi-lang-nodejs=\"`fail`\" pulumi-lang-dotnet=\"`Fail`\" pulumi-lang-go=\"`fail`\" pulumi-lang-python=\"`fail`\" pulumi-lang-yaml=\"`fail`\" pulumi-lang-java=\"`fail`\" pulumi-lang-hcl=\"`fail`\"\u003e`fail`\u003c/span\u003e aborts the push instead of clobbering unexpected remote changes; re-run `pulumi up` to pick up the new tip, or resolve the drift manually. Only takes effect when \u003cspan pulumi-lang-nodejs=\"`patches`\" pulumi-lang-dotnet=\"`Patches`\" pulumi-lang-go=\"`patches`\" pulumi-lang-python=\"`patches`\" pulumi-lang-yaml=\"`patches`\" pulumi-lang-java=\"`patches`\" pulumi-lang-hcl=\"`patches`\"\u003e`patches`\u003c/span\u003e is set. Must be one of \u003cspan pulumi-lang-nodejs=\"`fail`\" pulumi-lang-dotnet=\"`Fail`\" pulumi-lang-go=\"`fail`\" pulumi-lang-python=\"`fail`\" pulumi-lang-yaml=\"`fail`\" pulumi-lang-java=\"`fail`\" pulumi-lang-hcl=\"`fail`\"\u003e`fail`\u003c/span\u003e or \u003cspan pulumi-lang-nodejs=\"`force`\" pulumi-lang-dotnet=\"`Force`\" pulumi-lang-go=\"`force`\" pulumi-lang-python=\"`force`\" pulumi-lang-yaml=\"`force`\" pulumi-lang-java=\"`force`\" pulumi-lang-hcl=\"`force`\"\u003e`force`\u003c/span\u003e.\n"
+                },
+                "patches": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "Ordered list of patch diffs applied on top of base_ref, in the spirit of quilt push. When set, the resulting commits are force-pushed to the branch on the remote.\n"
+                },
+                "repository": {
+                    "$ref": "#/types/git:index/BranchRepository:BranchRepository",
+                    "description": "Repository the branch belongs to.\n"
+                },
+                "resolvedRef": {
+                    "type": "string",
+                    "description": "Resolved commit hash the branch currently tracks.\n"
+                }
+            },
+            "required": [
+                "baseRef",
+                "baseSha",
+                "name",
+                "onConflict",
+                "repository",
+                "resolvedRef"
+            ],
+            "inputProperties": {
+                "baseRef": {
+                    "type": "string",
+                    "description": "Ref this branch is based on.\n"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "Name of the branch.\n"
+                },
+                "onConflict": {
+                    "type": "string",
+                    "description": "How to handle the branch's remote tip having moved since it was last observed, when pushing the patch stack. \u003cspan pulumi-lang-nodejs=\"`force`\" pulumi-lang-dotnet=\"`Force`\" pulumi-lang-go=\"`force`\" pulumi-lang-python=\"`force`\" pulumi-lang-yaml=\"`force`\" pulumi-lang-java=\"`force`\" pulumi-lang-hcl=\"`force`\"\u003e`force`\u003c/span\u003e (default) always force-pushes, discarding drift, matching this provider's historical behavior. \u003cspan pulumi-lang-nodejs=\"`fail`\" pulumi-lang-dotnet=\"`Fail`\" pulumi-lang-go=\"`fail`\" pulumi-lang-python=\"`fail`\" pulumi-lang-yaml=\"`fail`\" pulumi-lang-java=\"`fail`\" pulumi-lang-hcl=\"`fail`\"\u003e`fail`\u003c/span\u003e aborts the push instead of clobbering unexpected remote changes; re-run `pulumi up` to pick up the new tip, or resolve the drift manually. Only takes effect when \u003cspan pulumi-lang-nodejs=\"`patches`\" pulumi-lang-dotnet=\"`Patches`\" pulumi-lang-go=\"`patches`\" pulumi-lang-python=\"`patches`\" pulumi-lang-yaml=\"`patches`\" pulumi-lang-java=\"`patches`\" pulumi-lang-hcl=\"`patches`\"\u003e`patches`\u003c/span\u003e is set. Must be one of \u003cspan pulumi-lang-nodejs=\"`fail`\" pulumi-lang-dotnet=\"`Fail`\" pulumi-lang-go=\"`fail`\" pulumi-lang-python=\"`fail`\" pulumi-lang-yaml=\"`fail`\" pulumi-lang-java=\"`fail`\" pulumi-lang-hcl=\"`fail`\"\u003e`fail`\u003c/span\u003e or \u003cspan pulumi-lang-nodejs=\"`force`\" pulumi-lang-dotnet=\"`Force`\" pulumi-lang-go=\"`force`\" pulumi-lang-python=\"`force`\" pulumi-lang-yaml=\"`force`\" pulumi-lang-java=\"`force`\" pulumi-lang-hcl=\"`force`\"\u003e`force`\u003c/span\u003e.\n"
+                },
+                "patches": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "Ordered list of patch diffs applied on top of base_ref, in the spirit of quilt push. When set, the resulting commits are force-pushed to the branch on the remote.\n"
+                },
+                "repository": {
+                    "$ref": "#/types/git:index/BranchRepository:BranchRepository",
+                    "description": "Repository the branch belongs to.\n"
+                }
+            },
+            "requiredInputs": [
+                "baseRef",
+                "repository"
+            ],
+            "stateInputs": {
+                "description": "Input properties used for looking up and filtering Branch resources.\n",
+                "properties": {
+                    "baseRef": {
+                        "type": "string",
+                        "description": "Ref this branch is based on.\n"
+                    },
+                    "baseSha": {
+                        "type": "string",
+                        "description": "Resolved commit hash of \u003cspan pulumi-lang-nodejs=\"`baseRef`\" pulumi-lang-dotnet=\"`BaseRef`\" pulumi-lang-go=\"`baseRef`\" pulumi-lang-python=\"`base_ref`\" pulumi-lang-yaml=\"`baseRef`\" pulumi-lang-java=\"`baseRef`\" pulumi-lang-hcl=\"`base_ref`\"\u003e`baseRef`\u003c/span\u003e as of the last read.\n"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Name of the branch.\n"
+                    },
+                    "onConflict": {
+                        "type": "string",
+                        "description": "How to handle the branch's remote tip having moved since it was last observed, when pushing the patch stack. \u003cspan pulumi-lang-nodejs=\"`force`\" pulumi-lang-dotnet=\"`Force`\" pulumi-lang-go=\"`force`\" pulumi-lang-python=\"`force`\" pulumi-lang-yaml=\"`force`\" pulumi-lang-java=\"`force`\" pulumi-lang-hcl=\"`force`\"\u003e`force`\u003c/span\u003e (default) always force-pushes, discarding drift, matching this provider's historical behavior. \u003cspan pulumi-lang-nodejs=\"`fail`\" pulumi-lang-dotnet=\"`Fail`\" pulumi-lang-go=\"`fail`\" pulumi-lang-python=\"`fail`\" pulumi-lang-yaml=\"`fail`\" pulumi-lang-java=\"`fail`\" pulumi-lang-hcl=\"`fail`\"\u003e`fail`\u003c/span\u003e aborts the push instead of clobbering unexpected remote changes; re-run `pulumi up` to pick up the new tip, or resolve the drift manually. Only takes effect when \u003cspan pulumi-lang-nodejs=\"`patches`\" pulumi-lang-dotnet=\"`Patches`\" pulumi-lang-go=\"`patches`\" pulumi-lang-python=\"`patches`\" pulumi-lang-yaml=\"`patches`\" pulumi-lang-java=\"`patches`\" pulumi-lang-hcl=\"`patches`\"\u003e`patches`\u003c/span\u003e is set. Must be one of \u003cspan pulumi-lang-nodejs=\"`fail`\" pulumi-lang-dotnet=\"`Fail`\" pulumi-lang-go=\"`fail`\" pulumi-lang-python=\"`fail`\" pulumi-lang-yaml=\"`fail`\" pulumi-lang-java=\"`fail`\" pulumi-lang-hcl=\"`fail`\"\u003e`fail`\u003c/span\u003e or \u003cspan pulumi-lang-nodejs=\"`force`\" pulumi-lang-dotnet=\"`Force`\" pulumi-lang-go=\"`force`\" pulumi-lang-python=\"`force`\" pulumi-lang-yaml=\"`force`\" pulumi-lang-java=\"`force`\" pulumi-lang-hcl=\"`force`\"\u003e`force`\u003c/span\u003e.\n"
+                    },
+                    "patches": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Ordered list of patch diffs applied on top of base_ref, in the spirit of quilt push. When set, the resulting commits are force-pushed to the branch on the remote.\n"
+                    },
+                    "repository": {
+                        "$ref": "#/types/git:index/BranchRepository:BranchRepository",
+                        "description": "Repository the branch belongs to.\n"
+                    },
+                    "resolvedRef": {
+                        "type": "string",
+                        "description": "Resolved commit hash the branch currently tracks.\n"
+                    }
+                },
+                "type": "object"
+            }
+        }
+    },
+    "functions": {
+        "git:index/getPatch:getPatch": {
+            "description": "Resolves a single patch: a local file, inline diff content, or a remote host source (e.g. a GitHub PR/commit or a GitLab MR/commit). Exactly one of \u003cspan pulumi-lang-nodejs=\"`content`\" pulumi-lang-dotnet=\"`Content`\" pulumi-lang-go=\"`content`\" pulumi-lang-python=\"`content`\" pulumi-lang-yaml=\"`content`\" pulumi-lang-java=\"`content`\" pulumi-lang-hcl=\"`content`\"\u003e`content`\u003c/span\u003e, \u003cspan pulumi-lang-nodejs=\"`file`\" pulumi-lang-dotnet=\"`File`\" pulumi-lang-go=\"`file`\" pulumi-lang-python=\"`file`\" pulumi-lang-yaml=\"`file`\" pulumi-lang-java=\"`file`\" pulumi-lang-hcl=\"`file`\"\u003e`file`\u003c/span\u003e, \u003cspan pulumi-lang-nodejs=\"`github`\" pulumi-lang-dotnet=\"`Github`\" pulumi-lang-go=\"`github`\" pulumi-lang-python=\"`github`\" pulumi-lang-yaml=\"`github`\" pulumi-lang-java=\"`github`\" pulumi-lang-hcl=\"`github`\"\u003e`github`\u003c/span\u003e, or \u003cspan pulumi-lang-nodejs=\"`gitlab`\" pulumi-lang-dotnet=\"`Gitlab`\" pulumi-lang-go=\"`gitlab`\" pulumi-lang-python=\"`gitlab`\" pulumi-lang-yaml=\"`gitlab`\" pulumi-lang-java=\"`gitlab`\" pulumi-lang-hcl=\"`gitlab`\"\u003e`gitlab`\u003c/span\u003e must be set. Does not clone, apply, commit, or push; that is \u003cspan pulumi-lang-nodejs=\"`git.Branch`\" pulumi-lang-dotnet=\"`git.Branch`\" pulumi-lang-go=\"`Branch`\" pulumi-lang-python=\"`Branch`\" pulumi-lang-yaml=\"`git.Branch`\" pulumi-lang-java=\"`git.Branch`\" pulumi-lang-hcl=\"`git_branch`\"\u003e`git.Branch`\u003c/span\u003e's responsibility.\n\n",
+            "inputs": {
+                "description": "A collection of arguments for invoking getPatch.\n",
+                "properties": {
+                    "auth": {
+                        "$ref": "#/types/git:index/getPatchAuth:getPatchAuth",
+                        "description": "Authentication details used to call the GitHub or GitLab API when \u003cspan pulumi-lang-nodejs=\"`github`\" pulumi-lang-dotnet=\"`Github`\" pulumi-lang-go=\"`github`\" pulumi-lang-python=\"`github`\" pulumi-lang-yaml=\"`github`\" pulumi-lang-java=\"`github`\" pulumi-lang-hcl=\"`github`\"\u003e`github`\u003c/span\u003e or \u003cspan pulumi-lang-nodejs=\"`gitlab`\" pulumi-lang-dotnet=\"`Gitlab`\" pulumi-lang-go=\"`gitlab`\" pulumi-lang-python=\"`gitlab`\" pulumi-lang-yaml=\"`gitlab`\" pulumi-lang-java=\"`gitlab`\" pulumi-lang-hcl=\"`gitlab`\"\u003e`gitlab`\u003c/span\u003e is set.\n"
+                    },
+                    "content": {
+                        "type": "string",
+                        "description": "Inline unified diff content.\n"
+                    },
+                    "file": {
+                        "type": "string",
+                        "description": "Path to a local patch file, read on refresh.\n"
+                    },
+                    "github": {
+                        "$ref": "#/types/git:index/getPatchGithub:getPatchGithub",
+                        "description": "Resolves the patch from a GitHub pull request or commit. Exactly one of \u003cspan pulumi-lang-nodejs=\"`pr`\" pulumi-lang-dotnet=\"`Pr`\" pulumi-lang-go=\"`pr`\" pulumi-lang-python=\"`pr`\" pulumi-lang-yaml=\"`pr`\" pulumi-lang-java=\"`pr`\" pulumi-lang-hcl=\"`pr`\"\u003e`pr`\u003c/span\u003e or \u003cspan pulumi-lang-nodejs=\"`commit`\" pulumi-lang-dotnet=\"`Commit`\" pulumi-lang-go=\"`commit`\" pulumi-lang-python=\"`commit`\" pulumi-lang-yaml=\"`commit`\" pulumi-lang-java=\"`commit`\" pulumi-lang-hcl=\"`commit`\"\u003e`commit`\u003c/span\u003e must be set.\n"
+                    },
+                    "gitlab": {
+                        "$ref": "#/types/git:index/getPatchGitlab:getPatchGitlab",
+                        "description": "Resolves the patch from a GitLab merge request or commit. Exactly one of \u003cspan pulumi-lang-nodejs=\"`mr`\" pulumi-lang-dotnet=\"`Mr`\" pulumi-lang-go=\"`mr`\" pulumi-lang-python=\"`mr`\" pulumi-lang-yaml=\"`mr`\" pulumi-lang-java=\"`mr`\" pulumi-lang-hcl=\"`mr`\"\u003e`mr`\u003c/span\u003e or \u003cspan pulumi-lang-nodejs=\"`commit`\" pulumi-lang-dotnet=\"`Commit`\" pulumi-lang-go=\"`commit`\" pulumi-lang-python=\"`commit`\" pulumi-lang-yaml=\"`commit`\" pulumi-lang-java=\"`commit`\" pulumi-lang-hcl=\"`commit`\"\u003e`commit`\u003c/span\u003e must be set.\n"
+                    }
+                },
+                "type": "object"
+            },
+            "outputs": {
+                "description": "A collection of values returned by getPatch.\n",
+                "properties": {
+                    "auth": {
+                        "$ref": "#/types/git:index/getPatchAuth:getPatchAuth",
+                        "description": "Authentication details used to call the GitHub or GitLab API when \u003cspan pulumi-lang-nodejs=\"`github`\" pulumi-lang-dotnet=\"`Github`\" pulumi-lang-go=\"`github`\" pulumi-lang-python=\"`github`\" pulumi-lang-yaml=\"`github`\" pulumi-lang-java=\"`github`\" pulumi-lang-hcl=\"`github`\"\u003e`github`\u003c/span\u003e or \u003cspan pulumi-lang-nodejs=\"`gitlab`\" pulumi-lang-dotnet=\"`Gitlab`\" pulumi-lang-go=\"`gitlab`\" pulumi-lang-python=\"`gitlab`\" pulumi-lang-yaml=\"`gitlab`\" pulumi-lang-java=\"`gitlab`\" pulumi-lang-hcl=\"`gitlab`\"\u003e`gitlab`\u003c/span\u003e is set.\n"
+                    },
+                    "content": {
+                        "description": "Inline unified diff content.\n",
+                        "type": "string"
+                    },
+                    "diff": {
+                        "description": "Resolved unified diff content, from whichever of \u003cspan pulumi-lang-nodejs=\"`content`\" pulumi-lang-dotnet=\"`Content`\" pulumi-lang-go=\"`content`\" pulumi-lang-python=\"`content`\" pulumi-lang-yaml=\"`content`\" pulumi-lang-java=\"`content`\" pulumi-lang-hcl=\"`content`\"\u003e`content`\u003c/span\u003e, \u003cspan pulumi-lang-nodejs=\"`file`\" pulumi-lang-dotnet=\"`File`\" pulumi-lang-go=\"`file`\" pulumi-lang-python=\"`file`\" pulumi-lang-yaml=\"`file`\" pulumi-lang-java=\"`file`\" pulumi-lang-hcl=\"`file`\"\u003e`file`\u003c/span\u003e, or \u003cspan pulumi-lang-nodejs=\"`github`\" pulumi-lang-dotnet=\"`Github`\" pulumi-lang-go=\"`github`\" pulumi-lang-python=\"`github`\" pulumi-lang-yaml=\"`github`\" pulumi-lang-java=\"`github`\" pulumi-lang-hcl=\"`github`\"\u003e`github`\u003c/span\u003e was set.\n",
+                        "type": "string"
+                    },
+                    "file": {
+                        "description": "Path to a local patch file, read on refresh.\n",
+                        "type": "string"
+                    },
+                    "github": {
+                        "$ref": "#/types/git:index/getPatchGithub:getPatchGithub",
+                        "description": "Resolves the patch from a GitHub pull request or commit. Exactly one of \u003cspan pulumi-lang-nodejs=\"`pr`\" pulumi-lang-dotnet=\"`Pr`\" pulumi-lang-go=\"`pr`\" pulumi-lang-python=\"`pr`\" pulumi-lang-yaml=\"`pr`\" pulumi-lang-java=\"`pr`\" pulumi-lang-hcl=\"`pr`\"\u003e`pr`\u003c/span\u003e or \u003cspan pulumi-lang-nodejs=\"`commit`\" pulumi-lang-dotnet=\"`Commit`\" pulumi-lang-go=\"`commit`\" pulumi-lang-python=\"`commit`\" pulumi-lang-yaml=\"`commit`\" pulumi-lang-java=\"`commit`\" pulumi-lang-hcl=\"`commit`\"\u003e`commit`\u003c/span\u003e must be set.\n"
+                    },
+                    "gitlab": {
+                        "$ref": "#/types/git:index/getPatchGitlab:getPatchGitlab",
+                        "description": "Resolves the patch from a GitLab merge request or commit. Exactly one of \u003cspan pulumi-lang-nodejs=\"`mr`\" pulumi-lang-dotnet=\"`Mr`\" pulumi-lang-go=\"`mr`\" pulumi-lang-python=\"`mr`\" pulumi-lang-yaml=\"`mr`\" pulumi-lang-java=\"`mr`\" pulumi-lang-hcl=\"`mr`\"\u003e`mr`\u003c/span\u003e or \u003cspan pulumi-lang-nodejs=\"`commit`\" pulumi-lang-dotnet=\"`Commit`\" pulumi-lang-go=\"`commit`\" pulumi-lang-python=\"`commit`\" pulumi-lang-yaml=\"`commit`\" pulumi-lang-java=\"`commit`\" pulumi-lang-hcl=\"`commit`\"\u003e`commit`\u003c/span\u003e must be set.\n"
+                    },
+                    "id": {
+                        "description": "Stable identifier for the patch: the hex-encoded sha256 of the resolved \u003cspan pulumi-lang-nodejs=\"`diff`\" pulumi-lang-dotnet=\"`Diff`\" pulumi-lang-go=\"`diff`\" pulumi-lang-python=\"`diff`\" pulumi-lang-yaml=\"`diff`\" pulumi-lang-java=\"`diff`\" pulumi-lang-hcl=\"`diff`\"\u003e`diff`\u003c/span\u003e.\n",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "diff",
+                    "id"
+                ],
+                "type": "object"
+            }
+        },
+        "git:index/getRepository:getRepository": {
+            "description": "References an existing repository. Reference-only: this provider never creates or deletes repositories on the host. It resolves connection details (URL, host type, auth) used by other resources.\n\n## Example Usage\n\n\u003c!--Start PulumiCodeChooser --\u003e\n```typescript\nimport * as pulumi from \"@pulumi/pulumi\";\nimport * as git from \"@unmango/pulumi-git\";\n\n// Omits the required_providers block since this example also runs as an\n// acceptance test against an in-process build; see examples/provider/provider.tf.\n// Resolves and verifies a public repository via ls-remote.\nconst _this = git.getRepository({\n    url: \"https://github.com/UnstoppableMango/terraform-provider-git.git\",\n    host: \"github\",\n});\nexport const repositoryId = _this.then(_this =\u003e _this.id);\n```\n```python\nimport pulumi\nimport pulumi_git as git\n\n# Omits the required_providers block since this example also runs as an\n# acceptance test against an in-process build; see examples/provider/provider.tf.\n# Resolves and verifies a public repository via ls-remote.\nthis = git.get_repository(url=\"https://github.com/UnstoppableMango/terraform-provider-git.git\",\n    host=\"github\")\npulumi.export(\"repositoryId\", this.id)\n```\n```csharp\nusing System.Collections.Generic;\nusing System.Linq;\nusing Pulumi;\nusing Git = UnMango.Git;\n\nreturn await Deployment.RunAsync(() =\u003e \n{\n    // Omits the required_providers block since this example also runs as an\n    // acceptance test against an in-process build; see examples/provider/provider.tf.\n    // Resolves and verifies a public repository via ls-remote.\n    var @this = Git.GetRepository.Invoke(new()\n    {\n        Url = \"https://github.com/UnstoppableMango/terraform-provider-git.git\",\n        Host = \"github\",\n    });\n\n    return new Dictionary\u003cstring, object?\u003e\n    {\n        [\"repositoryId\"] = @this.Apply(@this =\u003e @this.Apply(getRepositoryResult =\u003e getRepositoryResult.Id)),\n    };\n});\n```\n```go\npackage main\n\nimport (\n\t\"github.com/UnstoppableMango/pulumi-provider-git/sdk/go/git\"\n\t\"github.com/pulumi/pulumi/sdk/v3/go/pulumi\"\n)\n\nfunc main() {\n\tpulumi.Run(func(ctx *pulumi.Context) error {\n\t\t// Omits the required_providers block since this example also runs as an\n\t\t// acceptance test against an in-process build; see examples/provider/provider.tf.\n\t\t// Resolves and verifies a public repository via ls-remote.\n\t\tthis, err := git.GetRepository(ctx, \u0026git.GetRepositoryArgs{\n\t\t\tUrl:  \"https://github.com/UnstoppableMango/terraform-provider-git.git\",\n\t\t\tHost: pulumi.StringRef(\"github\"),\n\t\t}, nil)\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\tctx.Export(\"repositoryId\", this.Id)\n\t\treturn nil\n\t})\n}\n```\n```hcl\npulumi {\n  required_providers {\n    git = {\n      source = \"pulumi/git\"\n    }\n  }\n}\n\ndata \"git_getrepository\" \"this\" {\n  url  = \"https://github.com/UnstoppableMango/terraform-provider-git.git\"\n  host = \"github\"\n}\n\n# Omits the required_providers block since this example also runs as an\n# acceptance test against an in-process build; see examples/provider/provider.tf.\n# Resolves and verifies a public repository via ls-remote.\noutput \"repositoryId\" {\n  value = data.git_getrepository.this.id\n}\n```\n```java\npackage generated_program;\n\nimport com.pulumi.Context;\nimport com.pulumi.Pulumi;\nimport com.pulumi.core.Output;\nimport com.pulumi.git.GitFunctions;\nimport com.pulumi.git.inputs.GetRepositoryArgs;\nimport java.util.ArrayList;\nimport java.util.Arrays;\nimport java.util.Map;\nimport java.io.File;\nimport java.nio.file.Files;\nimport java.nio.file.Paths;\n\npublic class App {\n    public static void main(String[] args) {\n        Pulumi.run(App::stack);\n    }\n\n    public static void stack(Context ctx) {\n        // Omits the required_providers block since this example also runs as an\n        // acceptance test against an in-process build; see examples/provider/provider.tf.\n        // Resolves and verifies a public repository via ls-remote.\n        final var this = GitFunctions.getRepository(GetRepositoryArgs.builder()\n            .url(\"https://github.com/UnstoppableMango/terraform-provider-git.git\")\n            .host(\"github\")\n            .build());\n\n        ctx.export(\"repositoryId\", this_.id());\n    }\n}\n```\n```yaml\nvariables:\n  # Omits the required_providers block since this example also runs as an\n  # acceptance test against an in-process build; see examples/provider/provider.tf.\n\n  # Resolves and verifies a public repository via ls-remote.\n  this:\n    fn::invoke:\n      function: git:getRepository\n      arguments:\n        url: https://github.com/UnstoppableMango/terraform-provider-git.git\n        host: github\noutputs:\n  repositoryId: ${this.id}\n```\n\u003c!--End PulumiCodeChooser --\u003e\n",
+            "inputs": {
+                "description": "A collection of arguments for invoking getRepository.\n",
+                "properties": {
+                    "auth": {
+                        "$ref": "#/types/git:index/getRepositoryAuth:getRepositoryAuth",
+                        "description": "Authentication details used to connect to the repository.\n"
+                    },
+                    "host": {
+                        "type": "string",
+                        "description": "Type of host the repository is on. Must be one of \u003cspan pulumi-lang-nodejs=\"`github`\" pulumi-lang-dotnet=\"`Github`\" pulumi-lang-go=\"`github`\" pulumi-lang-python=\"`github`\" pulumi-lang-yaml=\"`github`\" pulumi-lang-java=\"`github`\" pulumi-lang-hcl=\"`github`\"\u003e`github`\u003c/span\u003e, \u003cspan pulumi-lang-nodejs=\"`gitlab`\" pulumi-lang-dotnet=\"`Gitlab`\" pulumi-lang-go=\"`gitlab`\" pulumi-lang-python=\"`gitlab`\" pulumi-lang-yaml=\"`gitlab`\" pulumi-lang-java=\"`gitlab`\" pulumi-lang-hcl=\"`gitlab`\"\u003e`gitlab`\u003c/span\u003e, or \u003cspan pulumi-lang-nodejs=\"`generic`\" pulumi-lang-dotnet=\"`Generic`\" pulumi-lang-go=\"`generic`\" pulumi-lang-python=\"`generic`\" pulumi-lang-yaml=\"`generic`\" pulumi-lang-java=\"`generic`\" pulumi-lang-hcl=\"`generic`\"\u003e`generic`\u003c/span\u003e.\n"
+                    },
+                    "url": {
+                        "type": "string",
+                        "description": "URL of the repository.\n"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "url"
+                ]
+            },
+            "outputs": {
+                "description": "A collection of values returned by getRepository.\n",
+                "properties": {
+                    "auth": {
+                        "$ref": "#/types/git:index/getRepositoryAuth:getRepositoryAuth",
+                        "description": "Authentication details used to connect to the repository.\n"
+                    },
+                    "host": {
+                        "description": "Type of host the repository is on. Must be one of \u003cspan pulumi-lang-nodejs=\"`github`\" pulumi-lang-dotnet=\"`Github`\" pulumi-lang-go=\"`github`\" pulumi-lang-python=\"`github`\" pulumi-lang-yaml=\"`github`\" pulumi-lang-java=\"`github`\" pulumi-lang-hcl=\"`github`\"\u003e`github`\u003c/span\u003e, \u003cspan pulumi-lang-nodejs=\"`gitlab`\" pulumi-lang-dotnet=\"`Gitlab`\" pulumi-lang-go=\"`gitlab`\" pulumi-lang-python=\"`gitlab`\" pulumi-lang-yaml=\"`gitlab`\" pulumi-lang-java=\"`gitlab`\" pulumi-lang-hcl=\"`gitlab`\"\u003e`gitlab`\u003c/span\u003e, or \u003cspan pulumi-lang-nodejs=\"`generic`\" pulumi-lang-dotnet=\"`Generic`\" pulumi-lang-go=\"`generic`\" pulumi-lang-python=\"`generic`\" pulumi-lang-yaml=\"`generic`\" pulumi-lang-java=\"`generic`\" pulumi-lang-hcl=\"`generic`\"\u003e`generic`\u003c/span\u003e.\n",
+                        "type": "string"
+                    },
+                    "id": {
+                        "description": "Identifier for the repository. Mirrors the \u003cspan pulumi-lang-nodejs=\"`url`\" pulumi-lang-dotnet=\"`Url`\" pulumi-lang-go=\"`url`\" pulumi-lang-python=\"`url`\" pulumi-lang-yaml=\"`url`\" pulumi-lang-java=\"`url`\" pulumi-lang-hcl=\"`url`\"\u003e`url`\u003c/span\u003e attribute.\n",
+                        "type": "string"
+                    },
+                    "url": {
+                        "description": "URL of the repository.\n",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "id",
+                    "url"
+                ],
+                "type": "object"
+            }
+        },
+        "pulumi:providers:git/terraformConfig": {
+            "description": "This function returns a Terraform config object with terraform-namecased keys,to be used with the Terraform Module Provider.",
+            "inputs": {
+                "properties": {
+                    "__self__": {
+                        "type": "ref",
+                        "$ref": "#/provider"
+                    }
+                },
+                "type": "pulumi:providers:git/terraformConfig",
+                "required": [
+                    "__self__"
+                ]
+            },
+            "outputs": {
+                "properties": {
+                    "result": {
+                        "additionalProperties": {
+                            "$ref": "pulumi.json#/Any"
+                        },
+                        "type": "object"
+                    }
+                },
+                "required": [
+                    "result"
+                ],
+                "type": "object"
+            }
+        }
+    }
+}

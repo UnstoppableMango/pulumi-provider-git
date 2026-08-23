@@ -1,0 +1,29 @@
+{
+    "name": "@unmango/pulumi-git",
+    "version": "0.0.1",
+    "description": "A Pulumi package for declaring and reconciling the state of git repositories.",
+    "keywords": [
+        "git",
+        "patch",
+        "category/utility"
+    ],
+    "homepage": "https://github.com/UnstoppableMango/pulumi-provider-git",
+    "repository": "https://github.com/UnstoppableMango/pulumi-provider-git",
+    "license": "MIT",
+    "scripts": {
+        "build": "tsc"
+    },
+    "dependencies": {
+        "@pulumi/pulumi": "^3.142.0"
+    },
+    "devDependencies": {
+        "@types/node": "^20",
+        "typescript": "^4.7.0"
+    },
+    "pulumi": {
+        "resource": true,
+        "name": "git",
+        "version": "0.0.1",
+        "server": "github://api.github.com/UnstoppableMango/pulumi-provider-git"
+    }
+}

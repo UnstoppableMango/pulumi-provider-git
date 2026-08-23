@@ -39,7 +39,9 @@
           ...
         }:
         let
-          version = "0.0.1";
+          # The root VERSION file is the single source of truth, shared with the
+          # Makefile. It is git-tracked, so reading it stays pure-eval safe.
+          version = lib.strings.trim (builtins.readFile ./VERSION);
           goModule = "github.com/UnstoppableMango/pulumi-provider-git";
 
           # The flake module names `packages.pulumi-resource-git` after the

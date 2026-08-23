@@ -1,0 +1,34 @@
+name: Release
+
+# release-please pushes the `v*` tag when its release PR merges, which is what
+# starts this job. The archives it uploads are the only way consumers get the
+# plugin: Pulumi resolves it from the GitHub release named by the tag.
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  goreleaser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5
+        with:
+          # provider/ is a nested module; the root has no go.mod.
+          go-version-file: provider/go.mod
+
+      # No GPG import step. Signing needs GPG_PRIVATE_KEY and PASSPHRASE, and
+      # this repo has no secrets configured, so .goreleaser.yml omits `signs`.
+
+      - uses: goreleaser/goreleaser-action@e435ccd777264be153ace6237001ef4d979d3a7a # v6
+        with:
+          args: release --clean
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

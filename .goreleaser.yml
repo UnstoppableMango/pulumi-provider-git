@@ -1,0 +1,82 @@
+# Cross-compiles the plugin binary and attaches one tarball per platform to the
+# GitHub release that a `v*` tag creates.
+#
+# Nix builds the same binary for local development, but `systems` is
+# nix-systems/triplet (x86_64-linux, aarch64-linux, aarch64-darwin), so it
+# cannot produce the windows or x86_64-darwin artifacts consumers need.
+# goreleaser covers the full matrix, which is why releases go through it.
+version: 2
+
+project_name: pulumi-resource-git
+
+before:
+  hooks:
+    # provider/cmd/pulumi-resource-git/schema-embed.json is gitignored but
+    # //go:embed-ed by main.go, so a clean checkout cannot compile until tfgen
+    # has written it. `make tfgen` builds pulumi-tfgen-git, emits the embed,
+    # and stamps it with the version from the root VERSION file.
+    - make tfgen
+
+builds:
+  - dir: provider
+    main: ./cmd/pulumi-resource-git
+    # Pulumi's plugin loader looks for exactly `pulumi-resource-git` at the
+    # archive root. Unlike the terraform provider convention there is no
+    # `_vX.Y.Z` suffix.
+    binary: pulumi-resource-git
+    env:
+      - CGO_ENABLED=0
+    mod_timestamp: "{{ .CommitTimestamp }}"
+    flags:
+      - -trimpath
+    ldflags:
+      - "-s -w -X github.com/UnstoppableMango/pulumi-provider-git/provider/pkg/version.Version=v{{.Version}}"
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+
+archives:
+  # HARD CONTRACT with Pulumi's plugin resolver. `provider/resources.go` sets
+  # PluginDownloadURL to github://api.github.com/UnstoppableMango/pulumi-provider-git,
+  # and the SDK's standardAssetName builds the asset name it fetches as
+  #   pulumi-<kind>-<name>-v<version>-<os>-<arch>.tar.gz
+  # Notes, all load-bearing:
+  #   * the literal `v` is part of the name, and goreleaser's `.Version` is the
+  #     tag with `v` stripped, so `v{{ .Version }}` is correct and `{{ .Tag }}`
+  #     would double the prefix;
+  #   * tar.gz on every platform, windows included, never zip;
+  #   * `.Os`/`.Arch` must stay raw goos/goarch tokens (linux/darwin/windows,
+  #     amd64/arm64) because the resolver compares them to runtime.GOOS and
+  #     runtime.GOARCH verbatim;
+  #   * no wrap_in_directory, the binary must sit at the archive root.
+  - formats:
+      - tar.gz
+    name_template: "pulumi-resource-git-v{{ .Version }}-{{ .Os }}-{{ .Arch }}"
+    wrap_in_directory: false
+
+checksum:
+  name_template: "pulumi-resource-git-v{{ .Version }}-checksums.txt"
+  algorithm: sha256
+
+# No `signs` block. Signing the checksum file needs GPG_PRIVATE_KEY and
+# PASSPHRASE, and this repo has no secrets configured, so an unconditional
+# signing step would fail every release. Add one alongside the secrets.
+
+release:
+  # release-please has already created the tag and the GitHub release with its
+  # generated notes by the time this runs. keep-existing uploads the archives
+  # onto that release instead of rewriting its body.
+  mode: keep-existing
+  # Pulumi resolves plugins through /releases/tags/v<version> and reads
+  # tag_name from /releases/latest, neither of which sees drafts or
+  # prereleases. Releases must therefore be published outright.
+  draft: false
+  prerelease: false
+
+changelog:
+  # release-please owns CHANGELOG.md and writes the GitHub release notes.
+  disable: true

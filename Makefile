@@ -1,4 +1,6 @@
-VERSION := 0.0.1
+# The root VERSION file is the single source of truth. release-please rewrites
+# it on every bump, and flake.nix reads the same file.
+VERSION := $(shell tr -d '[:space:]' < VERSION)
 LDFLAGS := -X github.com/UnstoppableMango/pulumi-provider-git/provider/pkg/version.Version=v$(VERSION)
 TFGEN := ./bin/pulumi-tfgen-git
 

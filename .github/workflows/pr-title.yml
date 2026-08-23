@@ -1,0 +1,22 @@
+name: PR Title
+
+# release-please derives every version bump from conventional commit subjects.
+# Since PRs land squashed, the PR title becomes the commit subject, so this
+# check is what keeps the release automation bumping at all.
+on:
+  pull_request:
+    types:
+      - opened
+      - edited
+      - synchronize
+
+permissions:
+  pull-requests: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: amannn/action-semantic-pull-request@v6
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

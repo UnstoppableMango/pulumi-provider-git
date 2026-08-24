@@ -1,0 +1,10 @@
+# `pgp:` lists who can DECRYPT secrets/, not what gets encrypted. The payload is
+# the release signing key; the recipient is Erik's personal key, the same one
+# terraform-provider-git uses. Its public half is committed at keys/erik.asc so
+# `nix develop` can import it (see sopsPGPKeyDirs in flake.nix).
+#
+# After adding a recipient here, run `sops updatekeys secrets/*.enc.yaml` to
+# re-wrap the existing data keys; editing this file alone changes nothing.
+creation_rules:
+  - path_regex: secrets/.*\.enc\.ya?ml$
+    pgp: B4986C137EB15A0C91FB69FE264283BBFDC491BC

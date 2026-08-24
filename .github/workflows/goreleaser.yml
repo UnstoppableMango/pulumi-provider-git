@@ -24,11 +24,20 @@ jobs:
           # provider/ is a nested module; the root has no go.mod.
           go-version-file: provider/go.mod
 
-      # No GPG import step. Signing needs GPG_PRIVATE_KEY and PASSPHRASE, and
-      # this repo has no secrets configured, so .goreleaser.yml omits `signs`.
+      # Loads the release signing key into a gpg-agent that already holds the
+      # passphrase, so the `signs` block in .goreleaser.yml can run --batch.
+      # Both secrets are the decrypted fields of secrets/gpg-release-key.enc.yaml;
+      # see the README for the sops command that (re)sets them.
+      - name: Import GPG key
+        uses: crazy-max/ghaction-import-gpg@e89d40939c28e39f97cf32126055eeae86ba74ec # v6
+        id: import_gpg
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.PASSPHRASE }}
 
       - uses: goreleaser/goreleaser-action@e435ccd777264be153ace6237001ef4d979d3a7a # v6
         with:
           args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}

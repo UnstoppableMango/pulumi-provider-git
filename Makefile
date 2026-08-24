@@ -42,7 +42,11 @@ generate_nodejs: $(TFGEN)
 generate_python: $(TFGEN)
 	$(TFGEN) python --out sdk/python
 	$(call FAKE_GO_MOD,python)
-	cp README.md sdk/python/README.md
+	# A symlink, not a copy: pyproject.toml points `readme` at this path and
+	# PyPI renders the root README, but a copy silently goes stale whenever
+	# README.md is edited alone, which the codegen CI job then fails on. tfgen
+	# writes its own README.md here first, so this replaces it every run.
+	ln -sfn ../../README.md sdk/python/README.md
 
 generate_go: $(TFGEN)
 	$(TFGEN) go --out sdk/go

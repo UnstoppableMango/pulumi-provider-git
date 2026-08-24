@@ -62,9 +62,24 @@ checksum:
   name_template: "pulumi-resource-git-v{{ .Version }}-checksums.txt"
   algorithm: sha256
 
-# No `signs` block. Signing the checksum file needs GPG_PRIVATE_KEY and
-# PASSPHRASE, and this repo has no secrets configured, so an unconditional
-# signing step would fail every release. Add one alongside the secrets.
+signs:
+  # Detached-signs only the checksum file, so one signature covers every
+  # archive: the checksums are what a consumer verifies an archive against.
+  # The result is uploaded as `<checksums file>.sig` next to the archives.
+  #
+  # GPG_FINGERPRINT comes from the ghaction-import-gpg step in
+  # .github/workflows/goreleaser.yml, which also seeds the agent with the
+  # passphrase, so no --pinentry-mode is needed here. Key material lives in
+  # secrets/gpg-release-key.enc.yaml; the public half is release-key.asc.
+  - artifacts: checksum
+    args:
+      - "--batch"
+      - "--local-user"
+      - "{{ .Env.GPG_FINGERPRINT }}"
+      - "--output"
+      - "${signature}"
+      - "--detach-sign"
+      - "${artifact}"
 
 release:
   # release-please has already created the tag and the GitHub release with its

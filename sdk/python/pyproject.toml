@@ -5,7 +5,7 @@
   keywords = ["git", "patch", "category/utility"]
   readme = "README.md"
   requires-python = ">=3.9"
-  version = "0.0.1"
+  version = "0.0.2"
   [project.license]
     text = "MIT"
   [project.urls]

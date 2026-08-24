@@ -193,11 +193,8 @@ make fmt       # nix fmt
 
 Generated output (`provider/cmd/pulumi-resource-git/schema.json` and `sdk/`) is committed, because the nix build reads the SDK sources out of the git-tracked source tree.
 
-### Git hooks
-
-`sdk/python/README.md` is a copy of this file, made by `make generate_python`, and the codegen CI job fails when the two drift.
-Entering `nix develop` sets `core.hooksPath` to `.githooks/`, whose `pre-commit` hook re-copies the README and stages it, so a docs-only edit cannot leave the SDK copy stale.
-Run `git config core.hooksPath .githooks` by hand if you work outside the devShell, or `git config --unset core.hooksPath` to go back to `.git/hooks`.
+`sdk/python/README.md` is a committed symlink to this file, recreated by `make generate_python` after tfgen writes its own.
+PyPI renders it as the package description, and the symlink keeps a README-only edit from leaving the SDK copy stale, which the codegen CI job would otherwise fail on.
 
 ### Secrets
 

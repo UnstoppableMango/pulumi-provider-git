@@ -1,6 +1,6 @@
 {
     "name": "@unmango/pulumi-git",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "description": "A Pulumi package for declaring and reconciling the state of git repositories.",
     "keywords": [
         "git",
@@ -23,7 +23,7 @@
     "pulumi": {
         "resource": true,
         "name": "git",
-        "version": "0.0.1",
+        "version": "0.0.2",
         "server": "github://api.github.com/UnstoppableMango/pulumi-provider-git"
     }
 }

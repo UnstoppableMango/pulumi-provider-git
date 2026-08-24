@@ -9,7 +9,7 @@
     <PackageProjectUrl>https://github.com/UnstoppableMango/pulumi-provider-git</PackageProjectUrl>
     <RepositoryUrl>https://github.com/UnstoppableMango/pulumi-provider-git</RepositoryUrl>
     <PackageIcon>logo.png</PackageIcon>
-    <Version>0.0.1</Version>
+    <Version>0.0.2</Version>
 
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>

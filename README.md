@@ -33,7 +33,10 @@ The root `VERSION` file is the single source of truth for the provider version.
 Nothing else should hardcode a version.
 
 Bumps are owned by [release-please](https://github.com/googleapis/release-please), driven by [conventional commits](https://www.conventionalcommits.org).
-On every push to `main` it maintains a release PR that updates `CHANGELOG.md`, `VERSION`, and the committed generated manifests (`sdk/nodejs/package.json`, `sdk/nodejs/package-lock.json`, `sdk/python/pyproject.toml`, `sdk/dotnet/UnMango.Git.csproj`, and the three `pulumi-plugin.json` files).
+On every push to `main` it maintains a release PR that updates `CHANGELOG.md` and `VERSION`, and nothing else.
+Everything else that carries the version is generated from `VERSION`, so `.github/workflows/release-please.yml` has a second job that checks out the release branch, runs `make generate npm_deps`, and commits the result onto the PR.
+That covers the SDK manifests, the version the Go SDK embeds in `sdk/go/git/internal/pulumiUtilities.go`, and `npmDepsHash` in `flake.nix`, which changes with every bump because it hashes `sdk/nodejs/package-lock.json` itself.
+Teaching release-please to rewrite those files directly does not work: it has no updater for generated Go source, and its XML updater reformats the whole `.csproj` in a way `make generate` immediately reverts.
 `.github/workflows/pr-title.yml` enforces the commit convention on PR titles, since a squashed PR title becomes the commit subject release-please parses.
 Merging the release PR tags `v<version>` and publishes a GitHub release.
 

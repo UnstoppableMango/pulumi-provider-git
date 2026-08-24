@@ -8,17 +8,6 @@
       "package-name": "pulumi-provider-git",
       "include-component-in-tag": false,
       "version-file": "VERSION",
-      "extra-files": [
-        { "type": "json", "path": "sdk/nodejs/package.json", "jsonpath": "$.version" },
-        { "type": "json", "path": "sdk/nodejs/package.json", "jsonpath": "$.pulumi.version" },
-        { "type": "json", "path": "sdk/nodejs/package-lock.json", "jsonpath": "$.version" },
-        { "type": "json", "path": "sdk/nodejs/package-lock.json", "jsonpath": "$.packages[''].version" },
-        { "type": "json", "path": "sdk/go/git/pulumi-plugin.json", "jsonpath": "$.version" },
-        { "type": "json", "path": "sdk/python/pulumi_git/pulumi-plugin.json", "jsonpath": "$.version" },
-        { "type": "json", "path": "sdk/dotnet/pulumi-plugin.json", "jsonpath": "$.version" },
-        { "type": "toml", "path": "sdk/python/pyproject.toml", "jsonpath": "$.project.version" },
-        { "type": "xml", "path": "sdk/dotnet/UnMango.Git.csproj", "xpath": "//Project/PropertyGroup/Version" }
-      ],
       "changelog-sections": [
         { "type": "feat", "section": "Features" },
         { "type": "fix", "section": "Bug Fixes" },

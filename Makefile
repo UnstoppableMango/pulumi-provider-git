@@ -23,7 +23,11 @@ format fmt:
 
 generate: tfgen generate_nodejs generate_python generate_go generate_dotnet
 
-$(TFGEN): provider/*.go provider/go.* provider/cmd/pulumi-tfgen-git/*.go
+# VERSION is a prerequisite because it is baked into the binary through
+# LDFLAGS, and from there into every SDK. Without it a stale binary left over
+# from before a bump keeps emitting the old version and `make generate` looks
+# like a no-op.
+$(TFGEN): VERSION provider/*.go provider/go.* provider/cmd/pulumi-tfgen-git/*.go
 	cd provider && go build -ldflags "$(LDFLAGS)" -o ../$(TFGEN) ./cmd/pulumi-tfgen-git
 
 # Run from provider/ so the bridge can `go list -m` the upstream module and
@@ -62,5 +66,14 @@ nuget_deps:
 	nix build .#sdk-dotnet.passthru.fetch-deps
 	./result nix/dotnet-deps.json
 
+# Rewrites npmDepsHash in flake.nix. The hash covers sdk/nodejs/package-lock.json
+# itself, not just the tarballs it resolves to, so a version bump alone changes
+# it and `nix flake check` fails with a fixed-output hash mismatch. Run after
+# anything that rewrites the lock file, `make generate` included.
+npm_deps:
+	hash=$$(prefetch-npm-deps sdk/nodejs/package-lock.json) \
+		&& sed -i "s|npmDepsHash = \".*\";|npmDepsHash = \"$$hash\";|" flake.nix
+
 .PHONY: build update check lint format fmt generate tfgen \
-	generate_nodejs generate_python generate_go generate_dotnet nuget_deps
+	generate_nodejs generate_python generate_go generate_dotnet \
+	nuget_deps npm_deps

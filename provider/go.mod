@@ -3,7 +3,7 @@ module github.com/UnstoppableMango/pulumi-provider-git/provider
 go 1.26.5
 
 require (
-	github.com/UnstoppableMango/terraform-provider-git/shim v0.0.0
+	github.com/UnstoppableMango/terraform-provider-git/shim v0.0.4
 	github.com/pulumi/pulumi-terraform-bridge/v3 v3.137.0
 )
 

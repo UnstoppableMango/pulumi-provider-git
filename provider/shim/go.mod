@@ -3,7 +3,7 @@ module github.com/UnstoppableMango/terraform-provider-git/shim
 go 1.26.5
 
 require (
-	github.com/UnstoppableMango/terraform-provider-git v0.0.3
+	github.com/UnstoppableMango/terraform-provider-git v0.0.4
 	github.com/hashicorp/terraform-plugin-framework v1.19.0
 )
 

@@ -9,6 +9,8 @@ github.com/ProtonMail/go-crypto v1.4.1 h1:9RfcZHqEQUvP8RzecWEUafnZVtEvrBVL9BiF67
 github.com/ProtonMail/go-crypto v1.4.1/go.mod h1:e1OaTyu5SYVrO9gKOEhTc+5UcXtTUa+P3uLudwcgPqo=
 github.com/UnstoppableMango/terraform-provider-git v0.0.3 h1:u2QVi4uMcMGH+fcxZmuYt3ajs7keDc4B6nonTl7RyLo=
 github.com/UnstoppableMango/terraform-provider-git v0.0.3/go.mod h1:4SNTh1Yv8+4ZBj83Ge0MJJHxZKmsBs5InT8kreKAHY4=
+github.com/UnstoppableMango/terraform-provider-git v0.0.4 h1:LVPCHO6bNrvBj3pbgYI3vGU2rrWyjTMcZhLxZOK0Gtw=
+github.com/UnstoppableMango/terraform-provider-git v0.0.4/go.mod h1:4SNTh1Yv8+4ZBj83Ge0MJJHxZKmsBs5InT8kreKAHY4=
 github.com/agext/levenshtein v1.2.3 h1:YB2fHEn0UJagG8T1rrWknE3ZQzWM06O8AMAatNn7lmo=
 github.com/agext/levenshtein v1.2.3/go.mod h1:JEDfjyjHDjOF/1e4FlBE/PkbqA9OfWu2ki2W0IB5558=
 github.com/anmitsu/go-shlex v0.0.0-20200514113438-38f4b401e2be h1:9AeTilPcZAjCFIImctFaOjnTIavg87rW78vTPkQqLI8=

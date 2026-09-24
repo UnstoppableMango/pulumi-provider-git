@@ -1,5 +1,7 @@
 # Git Resource Provider
 
+[![Hercules CI](https://hercules-ci.com/api/v1/site/github/account/UnstoppableMango/project/pulumi-provider-git/badge)](https://hercules-ci.com/github/UnstoppableMango/pulumi-provider-git)
+
 A Pulumi provider for declaring and reconciling the state of git repositories, bridged from [UnstoppableMango/terraform-provider-git](https://github.com/UnstoppableMango/terraform-provider-git).
 
 It tracks branches against a base ref and applies a quilt-style ordered patch stack on top of them.

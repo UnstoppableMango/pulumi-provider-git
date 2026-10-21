@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.3](https://github.com/UnstoppableMango/pulumi-provider-git/compare/v0.0.2...v0.0.3) (2026-10-21)
+
+
+### Documentation
+
+* add Hercules CI badge ([#35](https://github.com/UnstoppableMango/pulumi-provider-git/issues/35)) ([3510a0c](https://github.com/UnstoppableMango/pulumi-provider-git/commit/3510a0c7d7ebfbe201c39d1c3fa362678cf5ea59))
+
 ## [0.0.2](https://github.com/UnstoppableMango/pulumi-provider-git/compare/v0.0.1...v0.0.2) (2026-08-24)
 
 

@@ -1,6 +1,6 @@
 {
   "resource": true,
   "name": "git",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "server": "github://api.github.com/UnstoppableMango/pulumi-provider-git"
 }

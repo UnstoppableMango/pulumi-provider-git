@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.0.3](https://github.com/UnstoppableMango/pulumi-provider-git/compare/v0.0.2...v0.0.3) (2026-10-27)
+
+
+### Bug Fixes
+
+* **codegen:** keep the Node SDK lockfile across regeneration ([#40](https://github.com/UnstoppableMango/pulumi-provider-git/issues/40)) ([e2e916d](https://github.com/UnstoppableMango/pulumi-provider-git/commit/e2e916d7e14e34c8f011bc365b056254662cfc9a))
+* **renovate:** preset syntax ([#41](https://github.com/UnstoppableMango/pulumi-provider-git/issues/41)) ([5a37970](https://github.com/UnstoppableMango/pulumi-provider-git/commit/5a379708236c08c3e393dcb7db95fcdbeb17ab21))
+
+
+### Documentation
+
+* add Hercules CI badge ([#35](https://github.com/UnstoppableMango/pulumi-provider-git/issues/35)) ([3510a0c](https://github.com/UnstoppableMango/pulumi-provider-git/commit/3510a0c7d7ebfbe201c39d1c3fa362678cf5ea59))
+* **agents:** fix external-PR filter and ticket fetch ([#42](https://github.com/UnstoppableMango/pulumi-provider-git/issues/42)) ([d7cce92](https://github.com/UnstoppableMango/pulumi-provider-git/commit/d7cce92f01e75ccd198dc95c9f5f436dc371fa52))
+* **agents:** fix external-PR filter and ticket fetch in issue tracker ([d7cce92](https://github.com/UnstoppableMango/pulumi-provider-git/commit/d7cce92f01e75ccd198dc95c9f5f436dc371fa52))
+* set up agent skills config ([#39](https://github.com/UnstoppableMango/pulumi-provider-git/issues/39)) ([18dedd5](https://github.com/UnstoppableMango/pulumi-provider-git/commit/18dedd55822289ae6702036bc0121e910e5e6379))
+
 ## [0.0.2](https://github.com/UnstoppableMango/pulumi-provider-git/compare/v0.0.1...v0.0.2) (2026-08-24)
 
 

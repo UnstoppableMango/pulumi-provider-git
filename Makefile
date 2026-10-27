@@ -38,8 +38,17 @@ tfgen: $(TFGEN)
 	cd provider && ../$(TFGEN) schema --out ./cmd/pulumi-resource-git
 	cd provider && VERSION=v$(VERSION) go generate ./cmd/pulumi-resource-git/...
 
+# tfgen wipes sdk/nodejs before writing it (the bridge's cleanDir), lockfile
+# included, so a plain `npm install --package-lock-only` afterwards re-resolves
+# every transitive dependency against the live registry and the codegen CI job
+# fails whenever upstream publishes anything. Carrying the committed lock across
+# the regeneration keeps those pins: npm only re-resolves what package.json
+# actually changed, and Renovate's lock file maintenance owns the rest.
 generate_nodejs: $(TFGEN)
-	$(TFGEN) nodejs --out sdk/nodejs
+	lock=$$(mktemp) \
+		&& { cp sdk/nodejs/package-lock.json "$$lock" 2>/dev/null || rm -f "$$lock"; } \
+		&& $(TFGEN) nodejs --out sdk/nodejs \
+		&& { [ ! -f "$$lock" ] || mv "$$lock" sdk/nodejs/package-lock.json; }
 	$(call FAKE_GO_MOD,nodejs)
 	cd sdk/nodejs && npm install --package-lock-only --no-audit --no-fund
 

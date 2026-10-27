@@ -16,6 +16,9 @@ before:
     # has written it. `make tfgen` builds pulumi-tfgen-git, emits the embed,
     # and stamps it with the version from the root VERSION file.
     - make tfgen
+    # Packs the Node.js SDK into sdk/nodejs/dist, picked up by the
+    # extra_files entries under checksum and release.
+    - make sdk_nodejs_tarball
 
 builds:
   - dir: provider
@@ -61,6 +64,9 @@ archives:
 checksum:
   name_template: "pulumi-resource-git-v{{ .Version }}-checksums.txt"
   algorithm: sha256
+  # The SDK tarball goes in the signed list with the plugin archives.
+  extra_files:
+    - glob: ./sdk/nodejs/dist/unmango-pulumi-git-*.tgz
 
 signs:
   # Detached-signs only the checksum file, so one signature covers every
@@ -91,6 +97,13 @@ release:
   # prereleases. Releases must therefore be published outright.
   draft: false
   prerelease: false
+  # Consumers depend on it by URL:
+  #   https://github.com/UnstoppableMango/pulumi-provider-git/releases/download/v<version>/unmango-pulumi-git-<version>.tgz
+  extra_files:
+    - glob: ./sdk/nodejs/dist/unmango-pulumi-git-*.tgz
+  # A rerun of a release job that failed partway through re-uploads over the
+  # assets it already attached instead of failing on their names.
+  replace_existing_artifacts: true
 
 changelog:
   # release-please owns CHANGELOG.md and writes the GitHub release notes.

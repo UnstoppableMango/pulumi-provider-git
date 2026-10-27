@@ -41,3 +41,22 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}
+
+      # The Node.js SDK ships as an npm tarball on the same release, so a
+      # consumer that only runs `npm install`/`bun install` (the Pulumi
+      # Kubernetes Operator's workspace pod, for one) can depend on it by URL:
+      #   https://github.com/UnstoppableMango/pulumi-provider-git/releases/download/v<version>/unmango-pulumi-git-<version>.tgz
+      # The tarball's `pulumi.server` points the plugin download at the
+      # archives above. The package root is the compiled bin/, as with
+      # Pulumi's own SDKs.
+      - name: Attach the Node.js SDK
+        working-directory: sdk/nodejs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          npm ci --ignore-scripts
+          npm run build
+          cp package.json README.md bin/
+          tarball=$(npm pack ./bin --pack-destination "$RUNNER_TEMP" | tail -n1)
+          gh release upload "$TAG" "$RUNNER_TEMP/$tarball"

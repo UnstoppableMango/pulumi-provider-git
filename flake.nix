@@ -94,7 +94,7 @@
                 # Covers the lock file itself, so the version in it is part of
                 # the hash and every release bump invalidates this line.
                 # `make npm_deps` rewrites it.
-                npmDepsHash = "sha256-VJdvZz473s3CHd9FrQ+gBHAUGltBBYHcSVg/dLmyR18=";
+                npmDepsHash = "sha256-bgDf5gwYtHCRjXvOAz9a2OOIRUvglmHIJaReJdxLAKM=";
               };
 
               python.narrowSrc = false;

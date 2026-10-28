@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.5](https://github.com/UnstoppableMango/pulumi-provider-git/compare/v0.0.4...v0.0.5) (2026-10-28)
+
+
+### Bug Fixes
+
+* license the project under MIT ([#51](https://github.com/UnstoppableMango/pulumi-provider-git/issues/51)) ([da798a7](https://github.com/UnstoppableMango/pulumi-provider-git/commit/da798a767eb99a28dadb8dfaeab8e7a7539af702))
+
 ## [0.0.4](https://github.com/UnstoppableMango/pulumi-provider-git/compare/v0.0.3...v0.0.4) (2026-10-28)
 
 

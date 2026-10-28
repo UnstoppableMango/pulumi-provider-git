@@ -90,7 +90,7 @@ npm_deps:
 # compiled bin/, as with Pulumi's own SDKs.
 sdk_nodejs_tarball:
 	cd sdk/nodejs && npm ci --ignore-scripts && npm run build
-	cp sdk/nodejs/package.json sdk/nodejs/README.md sdk/nodejs/bin/
+	cp sdk/nodejs/package.json sdk/nodejs/README.md LICENSE sdk/nodejs/bin/
 	rm -rf sdk/nodejs/dist && mkdir -p sdk/nodejs/dist
 	npm pack ./sdk/nodejs/bin --pack-destination sdk/nodejs/dist
 

@@ -12,13 +12,13 @@ It tracks branches against a base ref and applies a quilt-style ordered patch st
 No release has been cut, so there is no `v*` tag, no GitHub release, and no package on any registry.
 Until the first release lands, none of the following resolve:
 
-- `npm install @unmango/pulumi-git` (not published to npm)
+- `npm install @unmango/pulumi-git` (not published to npm; from the next release on, depend on the tarball attached to the GitHub release instead, `https://github.com/UnstoppableMango/pulumi-provider-git/releases/download/v<version>/unmango-pulumi-git-<version>.tgz`)
 - `pip install pulumi_git` (not published to PyPI)
 - `dotnet add package UnMango.Git` (not published to NuGet)
 - `go get github.com/UnstoppableMango/pulumi-provider-git/sdk/go/git` (the Go module needs a `v*` tag to be resolvable)
 
 Of those four, only the Go module starts working automatically once a tag exists.
-npm, PyPI and NuGet publishing is not wired up at all; the release pipeline attaches the plugin to a GitHub release and stops there.
+npm, PyPI and NuGet publishing is not wired up; the release pipeline attaches the plugin, and the Node.js SDK as an npm tarball, to the GitHub release and stops there.
 
 Once the first tag lands, the intended install path is the GitHub release itself.
 `provider/resources.go` sets `PluginDownloadURL` to `github://api.github.com/UnstoppableMango/pulumi-provider-git`, so the Pulumi CLI resolves the plugin from this repository's releases and downloads the tarball for the current platform.

@@ -83,6 +83,17 @@ npm_deps:
 	hash=$$(prefetch-npm-deps sdk/nodejs/package-lock.json) \
 		&& sed -i "s|npmDepsHash = \".*\";|npmDepsHash = \"$$hash\";|" flake.nix
 
+# The Node.js SDK as an npm tarball, for consumers that can only `npm install`
+# or `bun install` (the Pulumi Kubernetes Operator's workspace pod, for one).
+# goreleaser runs this as a hook and attaches the result to the release next to
+# the plugin archives, inside the signed checksum list. The package root is the
+# compiled bin/, as with Pulumi's own SDKs.
+sdk_nodejs_tarball:
+	cd sdk/nodejs && npm ci --ignore-scripts && npm run build
+	cp sdk/nodejs/package.json sdk/nodejs/README.md sdk/nodejs/bin/
+	rm -rf sdk/nodejs/dist && mkdir -p sdk/nodejs/dist
+	npm pack ./sdk/nodejs/bin --pack-destination sdk/nodejs/dist
+
 .PHONY: build update check lint format fmt generate tfgen \
 	generate_nodejs generate_python generate_go generate_dotnet \
-	nuget_deps npm_deps
+	nuget_deps npm_deps sdk_nodejs_tarball

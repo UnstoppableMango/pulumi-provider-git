@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.4](https://github.com/UnstoppableMango/pulumi-provider-git/compare/v0.0.3...v0.0.4) (2026-10-28)
+
+
+### Features
+
+* attach the Node.js SDK tarball to each release ([#38](https://github.com/UnstoppableMango/pulumi-provider-git/issues/38)) ([577d0dc](https://github.com/UnstoppableMango/pulumi-provider-git/commit/577d0dcaf782fa86f35c39dfbee3129589c468a4))
+
 ## [0.0.3](https://github.com/UnstoppableMango/pulumi-provider-git/compare/v0.0.2...v0.0.3) (2026-10-27)
 
 

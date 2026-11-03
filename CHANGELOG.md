@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.6](https://github.com/UnstoppableMango/pulumi-provider-git/compare/v0.0.5...v0.0.6) (2026-11-03)
+
+
+### Documentation
+
+* **agents:** fix triage column and frontier query wording ([#57](https://github.com/UnstoppableMango/pulumi-provider-git/issues/57)) ([b04573b](https://github.com/UnstoppableMango/pulumi-provider-git/commit/b04573b0b79527332079d82b85dc953406e69b73))
+
 ## [0.0.5](https://github.com/UnstoppableMango/pulumi-provider-git/compare/v0.0.4...v0.0.5) (2026-10-28)
 
 
